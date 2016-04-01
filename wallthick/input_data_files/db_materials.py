@@ -20,6 +20,6 @@ materials = {
     "Coat2": Material("Coat1", 652, None, None, None, None)
 }
 
-if __name__ == "__main__":  #pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     for mat in materials:
         print(mat)

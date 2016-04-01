@@ -8,7 +8,7 @@ def default():
 
 @task
 def unit_tests():
-    sh('py.test --cov-report term --cov=wallthick tests/unit')
+    sh('py.test --cov-report term --cov-report html --cov-report xml --cov=wallthick tests/unit')
 
 @task
 def behave_tests():
