@@ -1,8 +1,24 @@
+************* Module wallthick.analysis
+wallthick/analysis.py:49: [W0107(unnecessary-pass), WallThick.__init__] Unnecessary pass statement
+wallthick/analysis.py:11: [W0613(unused-argument), WallThick.__init__] Unused argument 'data'
+wallthick/analysis.py:51: [C0111(missing-docstring), WallThick.calculate_hoop_thickness] Missing method docstring
+wallthick/analysis.py:51: [R0201(no-self-use), WallThick.calculate_hoop_thickness] Method could be a function
+wallthick/analysis.py:54: [C0111(missing-docstring), WallThick.calculate_collapse_thickness] Missing method docstring
+wallthick/analysis.py:57: [C0111(missing-docstring), WallThick.calculate_buckle_thickness] Missing method docstring
+wallthick/analysis.py:60: [C0111(missing-docstring), WallThick.determine_recommended_thickness] Missing method docstring
+wallthick/analysis.py:63: [C0111(missing-docstring), WallThick.calculate_test_pressures] Missing method docstring
+wallthick/analysis.py:66: [C0111(missing-docstring), WallThick.calculate_test_presure_ur] Missing method docstring
+************* Module wallthick.codes.dnvf101
+wallthick/codes/dnvf101.py:1: [C0111(missing-docstring), ] Missing module docstring
+************* Module wallthick.codes.pd8010
+wallthick/codes/pd8010.py:1: [C0111(missing-docstring), ] Missing module docstring
+wallthick/codes/pd8010.py:12: [R0201(no-self-use), Pd8010.design_factor_e] Method could be a function
+wallthick/codes/pd8010.py:21: [R0201(no-self-use), Pd8010.req_thickness] Method could be a function
 
 
 Report
 ======
-63 statements analysed.
+96 statements analysed.
 
 Statistics by type
 ------------------
@@ -10,13 +26,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |8      |9          |-1.00      |100.00      |0.00     |
+|module   |10     |8          |+2.00      |80.00       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |4      |4          |=          |100.00      |0.00     |
+|class    |7      |5          |+2.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |6      |6          |=          |100.00      |0.00     |
+|method   |16     |8          |+8.00      |62.50       |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |3          |-1.00      |100.00      |0.00     |
+|function |2      |2          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -26,6 +42,9 @@ External dependencies
 ::
 
     wallthick 
+      \-codes 
+      | \-dnvf101 (wallthick.analysis)
+      | \-pd8010 (wallthick.analysis)
       \-input_data_files 
         \-db_materials (wallthick.input_classes)
 
@@ -37,13 +56,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |86     |51.81 |107      |-21.00     |
+|code      |124    |30.85 |97       |+27.00     |
 +----------+-------+------+---------+-----------+
-|docstring |37     |22.29 |44       |-7.00      |
+|docstring |51     |12.69 |42       |+9.00      |
 +----------+-------+------+---------+-----------+
-|comment   |5      |3.01  |5        |=          |
+|comment   |137    |34.08 |21       |+116.00    |
 +----------+-------+------+---------+-----------+
-|empty     |38     |22.89 |46       |-8.00      |
+|empty     |90     |22.39 |48       |+42.00     |
 +----------+-------+------+---------+-----------+
 
 
@@ -67,18 +86,50 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |0        |=          |
+|convention |8      |1        |+7.00      |
 +-----------+-------+---------+-----------+
-|refactor   |0      |0        |=          |
+|refactor   |3      |0        |+3.00      |
 +-----------+-------+---------+-----------+
-|warning    |0      |0        |=          |
+|warning    |2      |2        |=          |
 +-----------+-------+---------+-----------+
-|error      |0      |0        |=          |
+|error      |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++------------------------+------+--------+---------+-----------+
+|module                  |error |warning |refactor |convention |
++========================+======+========+=========+===========+
+|wallthick.analysis      |0.00  |100.00  |33.33    |75.00      |
++------------------------+------+--------+---------+-----------+
+|wallthick.codes.pd8010  |0.00  |0.00    |66.67    |12.50      |
++------------------------+------+--------+---------+-----------+
+|wallthick.codes.dnvf101 |0.00  |0.00    |0.00     |12.50      |
++------------------------+------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++------------------+------------+
+|message id        |occurrences |
++==================+============+
+|missing-docstring |8           |
++------------------+------------+
+|no-self-use       |3           |
++------------------+------------+
+|unused-argument   |1           |
++------------------+------------+
+|unnecessary-pass  |1           |
++------------------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+Your code has been rated at 8.65/10 (previous run: 8.87/10, -0.23)
 
