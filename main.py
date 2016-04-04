@@ -21,6 +21,6 @@ if __name__ == "__main__":  # pragma: no cover
     # Determine case on which to run analysis from cmd line arg
     case_file = sys.argv[1]
     # Import module associated with case
-    case = importlib.import_module("input_data.{}".format(case_file))
+    case = importlib.import_module("wallthick.input_data_files.{}".format(case_file))
 
     main(case)

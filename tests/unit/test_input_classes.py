@@ -42,4 +42,4 @@ class TestEnvironment:
 
     def test_hydro_pressure(self, test_cases):
         (d, expected) = test_cases
-        assert Environment(d).hydro_pressure() == expected
+        assert Environment(None, None).hydro_pressure(d) == expected

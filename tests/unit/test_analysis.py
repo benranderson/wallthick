@@ -5,6 +5,7 @@ from wallthick.input_classes import Environment
 from wallthick.input_classes import Process
 from wallthick.input_classes import InputData
 from wallthick.analysis import WallThick
+from wallthick.input_data_files.db_materials import materials
 
 
 @pytest.fixture(scope='class', params=[
@@ -25,9 +26,10 @@ def wallthick_data(request):
     print('param      : %s' % request.param)
     print('-----------------')
 
-    pipe = Pipe(None, None, None, None, None, None)
-    environment = Environment(None, None, None, None)
-    process = Process(None, None, None)
+    material = materials["CS X65"]
+    pipe = Pipe(None, None, None, None, None, material)
+    environment = Environment(None, None, None, None, None)
+    process = Process(None, None, None, None)
     data = InputData(request.param, pipe, process, environment)
 
     return WallThick(data)
@@ -35,7 +37,7 @@ def wallthick_data(request):
 
 class TestWallThick:
     @pytest.fixture(params=[
-        # tuple with (input, expectedOutput)
+        # tuple with (input, expected)
         (1, 2),
         (2, 3),
         (3, 4)

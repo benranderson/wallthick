@@ -34,24 +34,26 @@ class Pipe:
 class Environment:
     """Class compiling environmental data"""
 
-    def __init__(self, d, T_a=4, rho_w=1025, g=9.81):
-        self.d = d
+    def __init__(self, d_max, d_min, T_a=4, rho_w=1025, g=9.81):
+        self.d_max = d_max
+        self.d_min = d_min
         self.T_a = T_a
         self.rho_w = rho_w
         self.g = g
 
-    def hydro_pressure(self):
+    def hydro_pressure(self, d):
         """-> Number [Pa]
         Calculate the hydrostatic external pressure at water depth"""
-        return self.rho_w*self.g*self.d
+        return self.rho_w*self.g*d
 
 
 class Process:
     """Class compiling process data"""
 
-    def __init__(self, T_d, P_d, T_t):
+    def __init__(self, T_d, P_d, P_h, T_t):
         self.T_d = T_d
         self.P_d = P_d
+        self.P_h = P_h
         self.T_t = T_t
 
 
@@ -72,13 +74,15 @@ def read_input_data(case):
                 case.f_0,
                 materials[case.mat_p])
 
-    environment = Environment(case.d,
+    environment = Environment(case.d_max,
+                              case.d_min,
                               case.T_a,
                               case.rho_w,
                               case.g)
 
     process = Process(case.T_d,
                       case.P_d,
+                      case.P_h,
                       case.T_t)
 
     data = InputData(case.name, pipe, process, environment)

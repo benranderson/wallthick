@@ -48,24 +48,25 @@ def derate_material(grade, sig_y, temp):
     # - Move plot to separate function
 
     # x-axis:
-    tempeartures = [0, 25, 50, 100, 150, 200]
+    temperatures = [0, 25, 50, 100, 150, 200]
 
     # y-axis:
     deratings = {"steel": [0, 0, 0, 30e6, 50e6, 70e6],
                  "duplex": [0, 0, 40e6, 90e6, 120e6, 140e6]}
 
+    # Possibly update to use Regular Expression match?
     steel_grades = ["CS X52", "CS X60", "CS X65", "CS X70"]
     duplex_grades = ["22Cr", "25Cr", "13Cr"]
 
-    try:
-        if grade in steel_grades:
-            derating = deratings["steel"]
-        elif grade in duplex_grades:
-            derating = deratings["duplex"]
-    except:
-        print("Select suitable material grade option")
+    if grade in steel_grades:
+        derating = deratings["steel"]
+    elif grade in duplex_grades:
+        derating = deratings["duplex"]
+    else:
+        derating = 0
+        raise ValueError("Select suitable material grade option")
 
-    f = interp1d(tempeartures, derating, bounds_error=False,
+    f = interp1d(temperatures, derating, bounds_error=False,
                  fill_value=max(derating))
 
     # # Plot Stress Derating Curve
@@ -103,17 +104,17 @@ def t_2(t_nom, t_cor):
     return t_nom - t_cor
 
 
-def ovality(fab_ov, od, t_nom, t_cor):
+def ovality(fab_ov, D_o, t_nom, t_cor):
     """ Determine ovality tolerance (Table 7-17) """
 
     if fab_ov == "dnv":
-        if od < 60.3e-3:
+        if D_o < 60.3e-3:
             ovality = 0
-        if od >= 60.3e-3 and od <= 610e-3:
+        elif D_o >= 60.3e-3 and D_o <= 610e-3:
             ovality = 0.015
-        if od > 610e-3 and od <= 1422e-3:
-            if od / (t_nom-t_cor) <= 75:
-                ovality = min(0.01, 10e-3/od)
+        elif D_o > 610e-3 and D_o <= 1422e-3:
+            if D_o / t_2(t_nom, t_cor) <= 75:
+                ovality = min(0.01, 10e-3/D_o)
             else:
                 ovality = 0
     else:
@@ -122,7 +123,7 @@ def ovality(fab_ov, od, t_nom, t_cor):
     return ovality
 
 
-def effective_axial_force(H, delta_P, A_i, v, A_s, E, alpha, delta_T):
+def effective_axial_force(H, delta_P, A_i, v, A_s, E, alpha, delta_T):  # pragma: no cover
     """ -> Number [N]
     Paragraph 411, Equation (4.12)
     Determine the effective axial force of a totally restrained pipe in
