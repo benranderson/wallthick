@@ -98,7 +98,7 @@ def collapse_thickness(P_o, sig_y_d, E, v, D_o, f_0):
         term_2 = ((P_o/P_y(t))**2-1)
         return term_1 * term_2 - (P_o/P_y(t))*f_0*(D_o/t)
 
-    return scipy.optimize.newton(char_resist, 1e-3, maxiter=1000)
+    return scipy.optimize.newton(char_resist, 1e-3)
 
 """
 G.2 Propagation Buckling

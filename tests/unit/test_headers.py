@@ -15,3 +15,13 @@ def func_header(request):
     print('\n-----------------')
     print('function    : %s' % request.function.__name__)
     print('time        : %s' % time.asctime())
+
+    # print('\n-----------------')
+    # print('fixturename : %s' % request.fixturename)
+    # print('scope       : %s' % request.scope)
+    # # print('function    : %s' % request.function.__name__)
+    # print('cls         : %s' % request.cls)
+    # print('module      : %s' % request.module.__name__)
+    # print('fspath      : %s' % request.fspath)
+    # print('param      : %s' % request.param)
+    # print('-----------------')

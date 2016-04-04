@@ -1,24 +1,19 @@
 ************* Module wallthick.analysis
-wallthick/analysis.py:49: [W0107(unnecessary-pass), WallThick.__init__] Unnecessary pass statement
-wallthick/analysis.py:11: [W0613(unused-argument), WallThick.__init__] Unused argument 'data'
-wallthick/analysis.py:51: [C0111(missing-docstring), WallThick.calculate_hoop_thickness] Missing method docstring
-wallthick/analysis.py:51: [R0201(no-self-use), WallThick.calculate_hoop_thickness] Method could be a function
-wallthick/analysis.py:54: [C0111(missing-docstring), WallThick.calculate_collapse_thickness] Missing method docstring
-wallthick/analysis.py:57: [C0111(missing-docstring), WallThick.calculate_buckle_thickness] Missing method docstring
-wallthick/analysis.py:60: [C0111(missing-docstring), WallThick.determine_recommended_thickness] Missing method docstring
-wallthick/analysis.py:63: [C0111(missing-docstring), WallThick.calculate_test_pressures] Missing method docstring
-wallthick/analysis.py:66: [C0111(missing-docstring), WallThick.calculate_test_presure_ur] Missing method docstring
+wallthick/analysis.py:28: [W0612(unused-variable), WallThick.__init__] Unused variable 'delta_P_min'
 ************* Module wallthick.codes.dnvf101
-wallthick/codes/dnvf101.py:1: [C0111(missing-docstring), ] Missing module docstring
+wallthick/codes/dnvf101.py:66: [R0204(redefined-variable-type), derate_material] Redefinition of derating type from list to int
+wallthick/codes/dnvf101.py:112: [W0621(redefined-outer-name), ovality] Redefining name 'ovality' from outer scope (line 107)
+wallthick/codes/dnvf101.py:114: [R0204(redefined-variable-type), ovality] Redefinition of ovality type from int to float
 ************* Module wallthick.codes.pd8010
-wallthick/codes/pd8010.py:1: [C0111(missing-docstring), ] Missing module docstring
-wallthick/codes/pd8010.py:12: [R0201(no-self-use), Pd8010.design_factor_e] Method could be a function
-wallthick/codes/pd8010.py:21: [R0201(no-self-use), Pd8010.req_thickness] Method could be a function
+wallthick/codes/pd8010.py:11: [W0105(pointless-string-statement), ] String statement has no effect
+wallthick/codes/pd8010.py:43: [W0105(pointless-string-statement), ] String statement has no effect
+wallthick/codes/pd8010.py:74: [W0105(pointless-string-statement), ] String statement has no effect
+wallthick/codes/pd8010.py:106: [W0105(pointless-string-statement), ] String statement has no effect
 
 
 Report
 ======
-96 statements analysed.
+172 statements analysed.
 
 Statistics by type
 ------------------
@@ -26,13 +21,13 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |type     |number |old number |difference |%documented |%badname |
 +=========+=======+===========+===========+============+=========+
-|module   |10     |8          |+2.00      |80.00       |0.00     |
+|module   |11     |10         |+1.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|class    |7      |5          |+2.00      |100.00      |0.00     |
+|class    |5      |7          |-2.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |16     |8          |+8.00      |62.50       |0.00     |
+|method   |7      |16         |-9.00      |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |2      |2          |=          |100.00      |0.00     |
+|function |16     |2          |+14.00     |100.00      |12.50    |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -41,6 +36,9 @@ External dependencies
 ---------------------
 ::
 
+    scipy 
+      \-interpolate (wallthick.codes.dnvf101)
+      \-optimize (wallthick.codes.pd8010)
     wallthick 
       \-codes 
       | \-dnvf101 (wallthick.analysis)
@@ -56,13 +54,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |124    |30.85 |97       |+27.00     |
+|code      |228    |41.08 |124      |+104.00    |
 +----------+-------+------+---------+-----------+
-|docstring |51     |12.69 |42       |+9.00      |
+|docstring |131    |23.60 |51       |+80.00     |
 +----------+-------+------+---------+-----------+
-|comment   |137    |34.08 |21       |+116.00    |
+|comment   |71     |12.79 |137      |-66.00     |
 +----------+-------+------+---------+-----------+
-|empty     |90     |22.39 |48       |+42.00     |
+|empty     |125    |22.52 |90       |+35.00     |
 +----------+-------+------+---------+-----------+
 
 
@@ -86,13 +84,13 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |8      |1        |+7.00      |
+|convention |0      |8        |-8.00      |
 +-----------+-------+---------+-----------+
-|refactor   |3      |0        |+3.00      |
+|refactor   |2      |3        |-1.00      |
 +-----------+-------+---------+-----------+
-|warning    |2      |2        |=          |
+|warning    |6      |2        |+4.00      |
 +-----------+-------+---------+-----------+
-|error      |0      |1        |-1.00      |
+|error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
 
 
@@ -103,11 +101,11 @@ Messages by category
 +------------------------+------+--------+---------+-----------+
 |module                  |error |warning |refactor |convention |
 +========================+======+========+=========+===========+
-|wallthick.analysis      |0.00  |100.00  |33.33    |75.00      |
+|wallthick.codes.pd8010  |0.00  |66.67   |0.00     |0.00       |
 +------------------------+------+--------+---------+-----------+
-|wallthick.codes.pd8010  |0.00  |0.00    |66.67    |12.50      |
+|wallthick.codes.dnvf101 |0.00  |16.67   |100.00   |0.00       |
 +------------------------+------+--------+---------+-----------+
-|wallthick.codes.dnvf101 |0.00  |0.00    |0.00     |12.50      |
+|wallthick.analysis      |0.00  |16.67   |0.00     |0.00       |
 +------------------------+------+--------+---------+-----------+
 
 
@@ -115,21 +113,21 @@ Messages by category
 Messages
 --------
 
-+------------------+------------+
-|message id        |occurrences |
-+==================+============+
-|missing-docstring |8           |
-+------------------+------------+
-|no-self-use       |3           |
-+------------------+------------+
-|unused-argument   |1           |
-+------------------+------------+
-|unnecessary-pass  |1           |
-+------------------+------------+
++---------------------------+------------+
+|message id                 |occurrences |
++===========================+============+
+|pointless-string-statement |4           |
++---------------------------+------------+
+|redefined-variable-type    |2           |
++---------------------------+------------+
+|unused-variable            |1           |
++---------------------------+------------+
+|redefined-outer-name       |1           |
++---------------------------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.65/10 (previous run: 8.87/10, -0.23)
+Your code has been rated at 9.53/10 (previous run: 8.65/10, +0.89)
 

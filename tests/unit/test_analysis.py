@@ -9,43 +9,34 @@ from wallthick.input_data_files.db_materials import materials
 
 
 @pytest.fixture(scope='class', params=[
-    # name
-    "pipe1",
-    "pipe2",
-    "pipe3",
-    ],
-    autouse=False)
+    # tuple with (WallThick(InputData(name,
+    #                                 Pipe(t_sel, D_o, t_corr, f_tol, f_0,
+    #                                      material),
+    #                                 Process(T_d, P_d, P_h, T_t),
+    #                                 Environment(d_max, d_min, T_a, rho_w,
+    #                                             g))),
+    #             expected_t_h, expected_t_c, expected_t_b)
+    (WallThick(InputData("pipe1",
+                         Pipe(0.0111, 60.3e-3, 0, 0.125, 0.025,
+                              materials["CS X65"]),
+                         Process(0, 861.8e5, 0, 4),
+                         Environment(114.5, 87.5, 4, 1027, 9.81))),
+     8.143e-3, 1.271e-3, 1.695e-3),
+    ])
 def wallthick_data(request):
-    print('\n-----------------')
-    print('fixturename : %s' % request.fixturename)
-    print('scope       : %s' % request.scope)
-    # print('function    : %s' % request.function.__name__)
-    print('cls         : %s' % request.cls)
-    print('module      : %s' % request.module.__name__)
-    print('fspath      : %s' % request.fspath)
-    print('param      : %s' % request.param)
-    print('-----------------')
-
-    material = materials["CS X65"]
-    pipe = Pipe(None, None, None, None, None, material)
-    environment = Environment(None, None, None, None, None)
-    process = Process(None, None, None, None)
-    data = InputData(request.param, pipe, process, environment)
-
-    return WallThick(data)
+    return request.param
 
 
 class TestWallThick:
-    @pytest.fixture(params=[
-        # tuple with (input, expected)
-        (1, 2),
-        (2, 3),
-        (3, 4)
-        ])
-    def test_data(self, request):
-        return request.param
 
-    def test_calculate_hoop_thickness(self, wallthick_data, test_data):
-        (the_input, the_expected_output) = test_data
-        print(wallthick_data)
-        assert wallthick_data.calculate_hoop_thickness(the_input) == the_expected_output
+    def test_thickness_hoop(self, wallthick_data):
+        (wallthick, expected_t_h, expected_t_c, expected_t_b) = wallthick_data
+        assert abs(wallthick.t_h_req - expected_t_h) < 1e-6
+
+    def test_thickness_collapse(self, wallthick_data):
+        (wallthick, expected_t_h, expected_t_c, expected_t_b) = wallthick_data
+        assert abs(wallthick.t_c_req - expected_t_c) < 1e-6
+
+    def test_thickness_buckle(self, wallthick_data):
+        (wallthick, expected_t_h, expected_t_c, expected_t_b) = wallthick_data
+        assert abs(wallthick.t_b_req - expected_t_b) < 1e-6
