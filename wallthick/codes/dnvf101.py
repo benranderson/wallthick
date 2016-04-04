@@ -63,7 +63,7 @@ def derate_material(grade, sig_y, temp):
     elif grade in duplex_grades:
         derating = deratings["duplex"]
     else:
-        derating = 0
+        derating = [0, 0, 0, 0, 0, 0]
         raise ValueError("Select suitable material grade option")
 
     f = interp1d(temperatures, derating, bounds_error=False,
@@ -109,18 +109,18 @@ def ovality(fab_ov, D_o, t_nom, t_cor):
 
     if fab_ov == "dnv":
         if D_o < 60.3e-3:
-            ovality = 0
+            ov = 0.0
         elif D_o >= 60.3e-3 and D_o <= 610e-3:
-            ovality = 0.015
+            ov = 0.015
         elif D_o > 610e-3 and D_o <= 1422e-3:
             if D_o / t_2(t_nom, t_cor) <= 75:
-                ovality = min(0.01, 10e-3/D_o)
+                ov = min(0.01, 10e-3/D_o)
             else:
-                ovality = 0
+                ov = 0.0
     else:
-        ovality = fab_ov
+        ov = fab_ov
 
-    return ovality
+    return ov
 
 
 def effective_axial_force(H, delta_P, A_i, v, A_s, E, alpha, delta_T):  # pragma: no cover
