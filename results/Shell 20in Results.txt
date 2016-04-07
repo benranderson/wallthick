@@ -1,0 +1,16 @@
+Wall Thickness Design
+=====================
+
+Pipeline: Shell 20in
+
+Reeling Criterion:                               0.00 mm
+Pressure Containment:                            13.68 mm
+Pressure Containment (incl. bend thinning):      13.68 mm
+Hydrostatic Collapse:                            3.66 mm
+Propagation buckling:                            5.13 mm
+
+Minimum Recommended API Wall Thickness:          14.30 mm
+Selected Wall Thickness:                         14.30 mm
+
+Strength Test Pressure:                          199.61 bar
+Leak Test Pressure:                              145.20 bar

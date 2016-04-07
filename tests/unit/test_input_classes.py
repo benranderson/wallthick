@@ -8,8 +8,9 @@ from wallthick.input_classes import Environment
 
 
 def test_read_input_data():
+    # Update to set up and teardown input data file
     case = importlib.import_module(
-        "wallthick.input_data_files.pipe1")
+        "input_data_files.test_data_file")
     data = read_input_data(case)
     assert isinstance(data, InputData)
 
@@ -27,19 +28,19 @@ class TestPipe:
 
     def test_thin_wall_check(self, test_cases):
         (D_o, t, expected) = test_cases
-        pipe = Pipe(None, D_o, None, None, None, None)
+        pipe = Pipe(None, D_o, None, None, None, None, None, None)
         assert pipe.thin_wall_check(t) is expected
 
 
 class TestEnvironment:
     @pytest.fixture(params=[
-        # tuple with (d, expected)
-        (100, 1005525),
-        (0, 0),
+        # tuple with (d, grav, expected)
+        (100, 9.81, 1005525),
+        (0, 9.81, 0),
         ])
     def test_cases(self, request):
         return request.param
 
     def test_hydro_pressure(self, test_cases):
-        (d, expected) = test_cases
-        assert Environment(None, None).hydro_pressure(d) == expected
+        (d, grav, expected) = test_cases
+        assert Environment(None, None, g=grav).hydro_pressure(d) == expected
