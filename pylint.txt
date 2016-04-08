@@ -1,34 +1,13 @@
 ************* Module wallthick.input_classes
-wallthick/input_classes.py:102: [C0325(superfluous-parens), ] Unnecessary parens after 'except' keyword
 wallthick/input_classes.py:18: [R0902(too-many-instance-attributes), Pipe] Too many instance attributes (8/7)
-wallthick/input_classes.py:5: [C0411(wrong-import-order), ] external import "import scipy.constants" comes before "from input_data_files import db_materials"
-************* Module wallthick.codes.api5l
-wallthick/codes/api5l.py:61: [W0101(unreachable), recommended_wall_thickness] Unreachable code
-wallthick/codes/api5l.py:65: [W0101(unreachable), recommended_wall_thickness] Unreachable code
 ************* Module wallthick.codes.pd8010
-wallthick/codes/pd8010.py:15: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:48: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:60: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:94: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:126: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:140: [W0105(pointless-string-statement), ] String statement has no effect
-wallthick/codes/pd8010.py:157: [R0902(too-many-instance-attributes), WallThick] Too many instance attributes (16/7)
-wallthick/codes/pd8010.py:187: [C0112(empty-docstring), WallThick.initial_calcs] Empty method docstring
-wallthick/codes/pd8010.py:309: [R0201(no-self-use), WallThick.calculate_leak_test_pressure] Method could be a function
-wallthick/codes/pd8010.py:348: [C0111(missing-docstring), WallThick.plot_results] Missing method docstring
-wallthick/codes/pd8010.py:226: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 'sig_A' defined outside __init__
-wallthick/codes/pd8010.py:197: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'P_i' defined outside __init__
-wallthick/codes/pd8010.py:271: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_rec' defined outside __init__
-wallthick/codes/pd8010.py:204: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'P_o_max' defined outside __init__
-wallthick/codes/pd8010.py:219: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_r_nom' defined outside __init__
-wallthick/codes/pd8010.py:241: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_h_nom' defined outside __init__
-wallthick/codes/pd8010.py:265: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_b_nom' defined outside __init__
-wallthick/codes/pd8010.py:208: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'delta_P_min' defined outside __init__
-wallthick/codes/pd8010.py:246: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_h_nom_bt' defined outside __init__
-wallthick/codes/pd8010.py:203: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'P_o_min' defined outside __init__
-wallthick/codes/pd8010.py:207: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'delta_P_max' defined outside __init__
-wallthick/codes/pd8010.py:253: [W0201(attribute-defined-outside-init), WallThick.calculate_thicknesses] Attribute 't_c_nom' defined outside __init__
-wallthick/codes/pd8010.py:192: [W0201(attribute-defined-outside-init), WallThick.initial_calcs] Attribute 'sig_y_d' defined outside __init__
+wallthick/codes/pd8010.py:269: [R0201(no-self-use), WallThick.initial_calcs] Method could be a function
+wallthick/codes/pd8010.py:297: [R0914(too-many-locals), WallThick.calculate_thicknesses] Too many local variables (18/15)
+wallthick/codes/pd8010.py:333: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'delta_P_min'
+wallthick/codes/pd8010.py:332: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'P_i'
+wallthick/codes/pd8010.py:332: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'P_o_min'
+wallthick/codes/pd8010.py:297: [R0201(no-self-use), WallThick.calculate_thicknesses] Method could be a function
+wallthick/codes/pd8010.py:377: [R0201(no-self-use), WallThick.calculate_test_pressures] Method could be a function
 
 
 Report
@@ -45,9 +24,9 @@ Statistics by type
 +---------+-------+-----------+-----------+------------+---------+
 |class    |5      |5          |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|method   |14     |13         |+1.00      |85.71       |7.14     |
+|method   |13     |13         |=          |100.00      |0.00     |
 +---------+-------+-----------+-----------+------------+---------+
-|function |19     |19         |=          |100.00      |10.53    |
+|function |21     |21         |=          |100.00      |14.29    |
 +---------+-------+-----------+-----------+------------+---------+
 
 
@@ -75,13 +54,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |332    |48.19 |330      |+2.00      |
+|code      |315    |41.12 |339      |-24.00     |
 +----------+-------+------+---------+-----------+
-|docstring |146    |21.19 |144      |+2.00      |
+|docstring |232    |30.29 |240      |-8.00      |
 +----------+-------+------+---------+-----------+
-|comment   |69     |10.01 |75       |-6.00      |
+|comment   |68     |8.88  |50       |+18.00     |
 +----------+-------+------+---------+-----------+
-|empty     |142    |20.61 |140      |+2.00      |
+|empty     |151    |19.71 |143      |+8.00      |
 +----------+-------+------+---------+-----------+
 
 
@@ -105,11 +84,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |4      |4        |=          |
+|convention |0      |1        |-1.00      |
 +-----------+-------+---------+-----------+
-|refactor   |3      |3        |=          |
+|refactor   |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|warning    |21     |19       |+2.00      |
+|warning    |3      |10       |-7.00      |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -122,11 +101,9 @@ Messages by category
 +------------------------+------+--------+---------+-----------+
 |module                  |error |warning |refactor |convention |
 +========================+======+========+=========+===========+
-|wallthick.codes.pd8010  |0.00  |90.48   |66.67    |50.00      |
+|wallthick.codes.pd8010  |0.00  |100.00  |80.00    |0.00       |
 +------------------------+------+--------+---------+-----------+
-|wallthick.codes.api5l   |0.00  |9.52    |0.00     |0.00       |
-+------------------------+------+--------+---------+-----------+
-|wallthick.input_classes |0.00  |0.00    |33.33    |50.00      |
+|wallthick.input_classes |0.00  |0.00    |20.00    |0.00       |
 +------------------------+------+--------+---------+-----------+
 
 
@@ -134,31 +111,21 @@ Messages by category
 Messages
 --------
 
-+-------------------------------+------------+
-|message id                     |occurrences |
-+===============================+============+
-|attribute-defined-outside-init |13          |
-+-------------------------------+------------+
-|pointless-string-statement     |6           |
-+-------------------------------+------------+
-|unreachable                    |2           |
-+-------------------------------+------------+
-|too-many-instance-attributes   |2           |
-+-------------------------------+------------+
-|wrong-import-order             |1           |
-+-------------------------------+------------+
-|superfluous-parens             |1           |
-+-------------------------------+------------+
-|no-self-use                    |1           |
-+-------------------------------+------------+
-|missing-docstring              |1           |
-+-------------------------------+------------+
-|empty-docstring                |1           |
-+-------------------------------+------------+
++-----------------------------+------------+
+|message id                   |occurrences |
++=============================+============+
+|unused-variable              |3           |
++-----------------------------+------------+
+|no-self-use                  |3           |
++-----------------------------+------------+
+|too-many-locals              |1           |
++-----------------------------+------------+
+|too-many-instance-attributes |1           |
++-----------------------------+------------+
 
 
 
 Global evaluation
 -----------------
-Your code has been rated at 8.62/10 (previous run: 8.71/10, -0.09)
+Your code has been rated at 9.61/10 (previous run: 9.25/10, +0.36)
 

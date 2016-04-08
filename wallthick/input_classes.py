@@ -1,8 +1,8 @@
 """
 INPUT CLASSES
 """
-from input_data_files import db_materials
 import scipy.constants
+from input_data_files import db_materials
 
 
 class InputData:
@@ -99,8 +99,9 @@ def read_input_data(case):
 
         return data
 
-    except (TypeError):
-        return "Provided input case parameter not a module"
+    except TypeError:
+        print("Provided input case parameter not a module")
+        raise
 
 if __name__ == "__main__":  # pragma: no cover
     pass

@@ -1,3 +1,2 @@
-- Research Python module header format
-- py.test ignoring / skipping tests
-- list py.test assert statements
+- wallthick.plot_results
+- GUI - PyQt

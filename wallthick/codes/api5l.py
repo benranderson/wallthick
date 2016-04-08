@@ -57,9 +57,9 @@ def recommended_wall_thickness(D_o, req_wt):
         return 1e-3 * min(acceptable_wt)
 
     except KeyError:
+        print("\nOutside Diameter not standard API 5L size")
         raise
-        return "\nOutside Diameter not standard API 5L size"
 
     except ValueError:
+        print("\nRequired wall thickness greater than available API 5L sizes")
         raise
-        return "\nRequired wall thickness greater than available API 5L sizes"
