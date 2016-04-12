@@ -7,12 +7,18 @@ from wallthick.input_classes import Pipe
 from wallthick.input_classes import Environment
 
 
-def test_read_input_data():
+def test_read_input_data_returns_data():
     # Update to set up and teardown input data file
     case = importlib.import_module(
         "input_data_files.test_data_file")
     data = read_input_data(case)
     assert isinstance(data, InputData)
+
+
+def test_read_input_data_exception():
+    case = "pipe1"
+    with pytest.raises(AttributeError):
+        read_input_data(case)
 
 
 class TestPipe:

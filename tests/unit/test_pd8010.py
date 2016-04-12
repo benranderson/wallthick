@@ -32,18 +32,31 @@ def test_allowable_stress():
 
 
 @pytest.fixture(params=[
-    # tuple with (delta_P, D_o, sig_h_a, expected)
-    (852.984e5, 60.3e-3, 324e6, 7.937e-3)
+    # tuple with (P_i, P_o, D_o, sig_h_a, expected)
+    (187.392e5, 809171.21, 219.1e-3, 324e6, 6.06e-3)
     ])
 def test_hoop_thickness_thin_data(request):
     return request.param
 
 
 def test_hoop_thickness_thin(test_hoop_thickness_thin_data):
-    (delta_P, D_o, sig_h_a, expected) = test_hoop_thickness_thin_data
-    assert abs(pd8010.hoop_thickness_thin(delta_P, D_o,
+    (P_i, P_o, D_o, sig_h_a, expected) = test_hoop_thickness_thin_data
+    assert abs(pd8010.hoop_thickness_thin(P_i, P_o, D_o,
                                           sig_h_a) - expected) < 1e-6
 
+
+@pytest.fixture(params=[
+    # tuple with (P_i, P_o, D_o, sig_h_a, expected)
+    (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3)
+    ])
+def test_hoop_thickness_thick_data(request):
+    return request.param
+
+
+def test_hoop_thickness_thick(test_hoop_thickness_thick_data):
+    (P_i, P_o, D_o, sig_h_a, expected) = test_hoop_thickness_thick_data
+    assert abs(pd8010.hoop_thickness_thick(P_i, P_o, D_o,
+                                           sig_h_a) - expected) < 1e-6
 
 @pytest.fixture(params=[
     # tuple with (t, t_corr, f_tol, expected)
@@ -62,21 +75,6 @@ def test_req_thickness(test_data):
             pd8010.req_thickness(t, t_corr, f_tol)
     else:
         assert pd8010.req_thickness(t, t_corr, f_tol) == expected
-
-
-@pytest.fixture(params=[
-    # tuple with (delta_P, D_o, sig_h_a, expected)
-    (852.984e5, 60.3e-3, 324e6, 7.125e-3)
-    ])
-def test_hoop_thickness_thick_data(request):
-    return request.param
-
-
-def test_hoop_thickness_thick(test_hoop_thickness_thick_data):
-    (delta_P, D_o, sig_h_a, expected) = test_hoop_thickness_thick_data
-    assert abs(pd8010.hoop_thickness_thick(delta_P, D_o,
-                                           sig_h_a) - expected) < 1e-6
-
 
 """
 -------------------------

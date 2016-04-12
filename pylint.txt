@@ -3,9 +3,9 @@ wallthick/input_classes.py:18: [R0902(too-many-instance-attributes), Pipe] Too m
 ************* Module wallthick.codes.pd8010
 wallthick/codes/pd8010.py:269: [R0201(no-self-use), WallThick.initial_calcs] Method could be a function
 wallthick/codes/pd8010.py:297: [R0914(too-many-locals), WallThick.calculate_thicknesses] Too many local variables (18/15)
-wallthick/codes/pd8010.py:333: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'delta_P_min'
 wallthick/codes/pd8010.py:332: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'P_i'
 wallthick/codes/pd8010.py:332: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'P_o_min'
+wallthick/codes/pd8010.py:333: [W0612(unused-variable), WallThick.calculate_thicknesses] Unused variable 'delta_P_min'
 wallthick/codes/pd8010.py:297: [R0201(no-self-use), WallThick.calculate_thicknesses] Method could be a function
 wallthick/codes/pd8010.py:377: [R0201(no-self-use), WallThick.calculate_test_pressures] Method could be a function
 
@@ -54,13 +54,13 @@ Raw metrics
 +----------+-------+------+---------+-----------+
 |type      |number |%     |previous |difference |
 +==========+=======+======+=========+===========+
-|code      |315    |41.12 |339      |-24.00     |
+|code      |315    |40.91 |315      |=          |
 +----------+-------+------+---------+-----------+
-|docstring |232    |30.29 |240      |-8.00      |
+|docstring |236    |30.65 |234      |+2.00      |
 +----------+-------+------+---------+-----------+
-|comment   |68     |8.88  |50       |+18.00     |
+|comment   |68     |8.83  |68       |=          |
 +----------+-------+------+---------+-----------+
-|empty     |151    |19.71 |143      |+8.00      |
+|empty     |151    |19.61 |151      |=          |
 +----------+-------+------+---------+-----------+
 
 
@@ -84,11 +84,11 @@ Messages by category
 +-----------+-------+---------+-----------+
 |type       |number |previous |difference |
 +===========+=======+=========+===========+
-|convention |0      |1        |-1.00      |
+|convention |0      |0        |=          |
 +-----------+-------+---------+-----------+
 |refactor   |5      |5        |=          |
 +-----------+-------+---------+-----------+
-|warning    |3      |10       |-7.00      |
+|warning    |3      |3        |=          |
 +-----------+-------+---------+-----------+
 |error      |0      |0        |=          |
 +-----------+-------+---------+-----------+
@@ -127,5 +127,5 @@ Messages
 
 Global evaluation
 -----------------
-Your code has been rated at 9.61/10 (previous run: 9.25/10, +0.36)
+Your code has been rated at 9.61/10 (previous run: 9.61/10, +0.00)
 

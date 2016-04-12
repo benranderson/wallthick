@@ -5,6 +5,7 @@ Pipeline Systems - Part 2: Subsea pipelines – Code of practice - 2015
 """
 import math
 import scipy.optimize
+import datetime
 import wallthick.codes.dnvf101 as dnvf101
 import wallthick.codes.api5l as api5l
 
@@ -20,14 +21,13 @@ year = 2015
 # ===================
 
 
-def internal_pressure(P_d, rho_c, g, d, h_ref):
+def pressure_head(rho, g, d, h_ref):
     """
-    Number [Pa], Number [kg/m^3], Number [m/s/s], Number [m], Number [m] ->
-    Number [Pa]
+    Number [kg/m^3], Number [m/s/s], Number [m], Number [m] -> Number [Pa]
 
-    Return the pipe internal pressure at seabed. Considers pressure head.
+    Returns the pressure head considering the reference height relative to LAT.
     """
-    return P_d + rho_c*g*(d + h_ref)
+    return rho*g*(d + h_ref)
 
 
 # 6.4.1 Design Factors (Table 2)
@@ -48,53 +48,108 @@ df_s = 0.67
 # ========================
 
 
-def allowable_stress(sig_y):
+def allowable_hoop_stress(sig_y):
     """
     Number [Pa], Number [m], Number [Pa] -> Number [m]
 
-    Allowable Stress - Equation (2)
+    Returns the allowable hoop stress.
+
+    Equation (2)
     """
     return df_h * sig_y
 
 
-# 6.4.2.2 Hoop Stress
-# ===================
+# 6.4.2.2 Hoop
+# ============
 
 
-def hoop_thickness_thin(delta_P, D_o, sig_A):
+def hoop_pressure_thin(t, D_o, P_o, sig):
     """
-    Number [Pa], Number [m], Number [Pa] -> Number [m]
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
 
-    Thin wall - Equation (3)
+    Returns the internal pressure that induces a stress, sig, in a thin
+    wall pipe of thickness t.
+
+    Equation (3)
     """
-    return delta_P*D_o/(2*sig_A)
+    return ((sig*2*t)/D_o) + P_o
 
 
-def hoop_thickness_thick(delta_P, D_o, sig_A):
+def hoop_pressure_thick(t, D_o, P_o, sig):
     """
-    Number [Pa], Number [m], Number [Pa] -> Number [m]
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
 
-    Thick wall - Equation (5)
+    Returns the internal pressure that induces a stress, sig, in a thick
+    walled pipe of thickness t.
+
+    Equation (5)
     """
-    eq = math.sqrt((((sig_A-delta_P))*D_o**2) / (sig_A+delta_P))
+    return ((sig*(D_o**2-(D_o-2*t)**2))/(D_o**2+(D_o-2*t)**2)) + P_o
+
+
+def hoop_thickness_thin(P_i, P_o, D_o, sig_A):
+    """
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
+
+    Returns the minimum wall thickness for internal pressure containment for a
+    thin walled pipe.
+
+    Equation (3)
+    """
+    return abs(P_i-P_o)*D_o/(2*sig_A)
+
+
+def hoop_thickness_thick(P_i, P_o, D_o, sig_A):
+    """
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
+
+    Returns the minimum wall thickness for internal pressure containment for a
+    thick walled pipe.
+
+    Equation (5)
+    """
+    eq = math.sqrt((((sig_A-abs(P_i-P_o)))*D_o**2) / (sig_A+abs(P_i-P_o)))
     return 0.5 * (D_o - eq)
+
+
+def hoop_thickness(P_i, P_o_min, D_o, sig_A):
+    """
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
+
+    Returns the minimum (note not nominal) wall thickness for internal pressure
+    containment.
+
+    Considers:
+    - Allowable hoop stress
+    - Worst case maximum pressure difference
+    - Appropriate wall thickness theory, i.e. thick or thin
+    """
+    t_min_thin = hoop_thickness_thin(P_i, P_o_min, D_o, sig_A)
+
+    # Select appropriate wall theory based on minimum thin wall thickness
+    if D_o/t_min_thin > 20:
+        t_min = t_min_thin
+    else:
+        t_min = hoop_thickness_thick(P_i, P_o_min, D_o, sig_A)
+
+    return t_min
 
 
 def req_thickness(t_min, t_corr, f_tol):
     """
     Number [m], Number [m], Number [-] -> Number [m]
 
-    Determine required wall thickness based on mechanical allowances:
-    - corrosion allowance
-    - fabrication tolerance
+    Returns the required wall thickness based on the following mechanical
+    allowances:
+    - Corrosion allowance
+    - Fabrication tolerance
 
-    Exrapolated from equation (4)
+    Exrapolated from Equation (4)
     """
     try:
         return (t_min + t_corr) / (1 - f_tol)
     except ZeroDivisionError:
-        print("Divide by zero. Check fabrication tolerance.")
-        raise
+        raise ZeroDivisionError("Divide by zero. Check fabrication tolerance.")
 
 
 # G.1.2 External Pressure - Hydrostatic Collapse
@@ -106,16 +161,21 @@ def collapse_thickness(P_o, sig_y_d, E, v, D_o, f_0):
     Number [Pa], Number [Pa], Number [Pa], Number [-], Number [m], Number [-]
     -> Number [m]
 
-    Local Buckling Due to External Over Pressure
+    Returns the nominal wall thickness for local buckling due to external
+    pressure.
+
+    Considers the worst case maximum external over pressure, i.e.:
+    - Minimum internal pressure (zero)
+    - Maximum external pressure (at water depth, d)
+
     (Clause G.1.2)
-    Considers:
-    - minimum internal pressure (zero)
-    - maximum external pressure (at water depth, d)
     """
 
     def P_e(t):
         """
-        Critical Pressure for an Elastic Critical Tube
+        Number [m] -> Number [Pa]
+
+        Returns the critical pressure for an elastic critical tube.
 
         Equation (G.2)
         """
@@ -123,7 +183,9 @@ def collapse_thickness(P_o, sig_y_d, E, v, D_o, f_0):
 
     def P_y(t):
         """
-        Yield Pressure
+        Number [m] -> Number [Pa]
+
+        Returns the yield pressure.
 
         Equation (G.3)
         """
@@ -131,7 +193,9 @@ def collapse_thickness(P_o, sig_y_d, E, v, D_o, f_0):
 
     def char_resist(t):
         """
-        Characteristic resistance for external pressure
+        Number [m] -> Number [Pa]
+
+        Returns the characteristic resistance for external pressure
 
         Equation (G.1)
         """
@@ -150,7 +214,10 @@ def buckle_thickness(D_o, P_p, sig_y):
     """
     Number [m], Number [Pa], Number [Pa] -> Number [m]
 
-    Return the nominal buckle thickness based on the propagation pressure
+    Returns the nominal buckle thickness based on the propagation pressure.
+
+    Considers the worst case maximum external pressure and ignores internal
+    pressure.
 
     Equation (G.21)
     """
@@ -165,7 +232,11 @@ def reeling_thickness(D_o, R_reel, t_coat):
     """
     Number [m], Number [m], Number [m] -> Number [m]
 
-    Return the minimum reelable wall thickness
+    Returns the minimum wall thickness based on Reeling Criteria - Local
+    Buckling - Bending During Reeling.
+
+    Applicable for a pipe bent around a curvature on a vessel during
+    installation.
     """
     if R_reel > 0:
         # Functional strain from bending around vessel reel radius
@@ -182,12 +253,12 @@ def reeling_thickness(D_o, R_reel, t_coat):
 # =========================
 
 
-def calculate_strength_test_pressure(data):
+def calculate_strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h):
     """
     InputData -> Number [Pa]
 
-    Return the strength test pressure, the minimum of:
-    - 1.5 * design pressure
+    Returns the strength test pressure, i.e. the minimum of:
+    - 1.5 * design pressure:
         Note that hydrostatic head is not multiplied by 1.5 (interpreted by
         last paragraph of Section 11.5.2)
     - the pressure that induces a hoop stress of 90 percent SMYS at nominal
@@ -197,25 +268,21 @@ def calculate_strength_test_pressure(data):
     """
 
     # Determine nominal wall thickness (no corrosion)
-    t_min = data.pipe.t_sel * (1 - data.pipe.f_tol)
+    t_min = t_sel * (1 - f_tol)
 
     # Determine pressure that induces 90 percent SMYS using correct wall
     # theory (i.e. thick or thin)
-    if data.pipe.thin_wall_check(t_min):
+    if D_o/t_min > 20:
         # Thin wall equation
-        P_hoop = 0.9*data.pipe.material.sig_y*2*t_min/data.pipe.D_o + \
-            data.environment.hydro_pressure(data.environment.d_min)
+        P_hoop = hoop_pressure_thin(t_min, D_o, P_o, 0.9*sig_y)
     else:
         # Thick wall equation
-        num = 0.9*data.pipe.material.sig_y*(data.pipe.D_o**2 - (data.pipe.D_o - 2*t_min)**2)
-        den = data.pipe.D_o**2 + (data.pipe.D_o - 2*t_min)**2
-        P_hoop = num / den
+        P_hoop = hoop_pressure_thick(t_min, D_o, P_o, 0.9*sig_y)
 
-    # Determine 1.5 * Design Pressure
-    P_h = data.environment.rho_w*data.environment.g*data.process.h_ref
-    P_test = 1.5*data.process.P_d + P_h
+    # Determine 1.5 * Design Pressure (note pressure head not multiplied by
+    # 1.5)
+    P_test = 1.5*P_d + P_h
 
-    # Return strength test pressure
     return min(P_hoop, P_test)
 
 
@@ -237,7 +304,7 @@ class WallThick:
     installed on the seabed in accordance with allowable stress design code
     PD 8010.
 
-    Considers the following load scenarios:
+    Considers the following criteria:
     1. Reeling (if applicable)
     2. Pressure containment (bursting)
     3. Local buckling (collapse)
@@ -247,109 +314,48 @@ class WallThick:
     """
 
     def __init__(self, data):
+        """
+        Initialises and runs wall thickness calculations
+        """
 
         # Associate input data with design calculation object
         self.data = data
-        self.results = self.run_analysis(data)
 
-    def run_analysis(self, data):
-        """
-        InputData -> dict
+        self.results = {}
 
-        Manager method to carry out analysis
-        """
-
-        initial_results = self.initial_calcs(data)
-        thicknesses = self.calculate_thicknesses(data, initial_results)
-        test_pressures = self.calculate_test_pressures(data)
-
-        return {"thicknesses": thicknesses,
-                "test_pressures": test_pressures}
-
-    def initial_calcs(self, data):
-        """
-        InputData -> tuple
-
-        Initial calculations
-        """
+        # INITIAL CALCULATIONS
+        # ---------------------
 
         # Determine derated yield strength
         sig_y_d = dnvf101.derate_material(data.pipe.material.name,
                                           data.pipe.material.sig_y,
                                           data.process.T_d)
 
+        # Pressure head
+        P_h_d = pressure_head(data.process.rho_d, data.environment.g,
+                              data.environment.d_min, data.process.h_ref)
+
         # Calculate internal pressure at seabed
-        P_i = internal_pressure(data.process.P_d, data.process.rho_d,
-                                data.environment.g,
-                                data.environment.d_min,
-                                data.process.h_ref)
+        P_i = data.process.P_d + P_h_d
 
         # Calculate characteristic external pressures
-        P_o_min = data.environment.hydro_pressure(data.environment.d_min)
-        P_o_max = data.environment.hydro_pressure(data.environment.d_max)
+        P_o_min = pressure_head(data.environment.rho_w, data.environment.g,
+                                data.environment.d_min, 0)
+        P_o_max = pressure_head(data.environment.rho_w, data.environment.g,
+                                data.environment.d_max, 0)
 
-        # Calculate the pressure difference
-        delta_P_max = P_i - P_o_min
-        delta_P_min = P_i - P_o_max
-
-        return (sig_y_d, P_i, P_o_min, P_o_max, delta_P_max, delta_P_min)
-
-    def calculate_thicknesses(self, data, initial_results):
-        """
-        InputData, tuple -> dict
-
-        Return dictionary of nominal wall thickness.
-
-        Reeling Criteria - Local Buckling - Bending During Reeling
-        ----------------------------------------------------------
-        Note calculation applicable for a pipe bent around a curvature on a
-        vessel during installation.
-
-        Internal pressure containment (Hoop)
-        ------------------------------------
-        Calculate the allowable hoop stress
-        Note the maximum pressure difference is used
-        Consider correct wall theory, i.e. thick or thin
-        Consider bend thinning
-
-        Hydrostatic Collapse
-        --------------------
-        Calculate the minimum WT for local buckling due to external pressure
-        Note characteristic external pressure equal to max external pressure
-
-        Local Buckle Propagation
-        ------------------------
-        Calculate the minimum WT for propagation buckling due to external
-        pressure.
-        Note use maximum external pressure and ignore internal pressure.
-
-        Recommended Standard API 5L Pipe Size
-        -------------------------------------
-        Advise recommended size
-
-        """
-
-        (sig_y_d, P_i, P_o_min, P_o_max, delta_P_max,
-         delta_P_min) = initial_results
+        # THICKNESS CALCUULATIONS
+        # -----------------------
 
         # Reeling Criteria
         t_r_nom = reeling_thickness(data.pipe.D_o, data.process.R_reel,
                                     data.pipe.t_coat)
 
-        # Hoop
-        sig_A = allowable_stress(sig_y_d)
-        t_h_min_thin = hoop_thickness_thin(delta_P_max, data.pipe.D_o, sig_A)
-
-        # Wall theory check
-        if data.pipe.thin_wall_check(t_h_min_thin):
-            t_h_min = t_h_min_thin
-        else:
-            t_h_min = hoop_thickness_thick(delta_P_max, data.pipe.D_o, sig_A)
-
+        # Hoop Criteria
+        sig_A = allowable_hoop_stress(sig_y_d)
+        t_h_min = hoop_thickness(P_i, P_o_min, data.pipe.D_o, sig_A)
         t_h_nom = req_thickness(t_h_min, data.pipe.t_corr, data.pipe.f_tol)
-
-        # Bend thinning
-        t_h_nom_bt = t_h_nom / (1 - data.pipe.B)
+        t_h_nom_bt = t_h_nom / (1 - data.pipe.B)  # Bend thinning
 
         # Hydrostatic Collapse
         t_c_nom = collapse_thickness(P_o_max, sig_y_d, data.pipe.material.E,
@@ -360,65 +366,80 @@ class WallThick:
         # Local Buckle Propagation
         t_b_nom = buckle_thickness(data.pipe.D_o, P_o_max, sig_y_d)
 
-        # Recommended size
+        # Recommended API 5L wall thickness
         t_rec = api5l.recommended_wall_thickness(data.pipe.D_o, max(t_r_nom,
                                                                     t_h_nom,
                                                                     t_h_nom_bt,
                                                                     t_c_nom,
                                                                     t_b_nom))
 
-        return {"t_r_nom": t_r_nom,
-                "t_h_nom": t_h_nom,
-                "t_h_nom_bt": t_h_nom_bt,
-                "t_c_nom": t_c_nom,
-                "t_b_nom": t_b_nom,
-                "t_rec": t_rec}
+        # TEST PRESSURES
+        # --------------
 
-    def calculate_test_pressures(self, data):
-        """
-        InputData -> dict
-        """
+        # Pressure head
+        P_h_t = pressure_head(1025, data.environment.g,
+                              data.environment.d_min, data.process.h_ref)
 
-        P_st = calculate_strength_test_pressure(data)
+        # Strength test pressure
+        P_st = calculate_strength_test_pressure(data.pipe.t_sel,
+                                                data.pipe.f_tol,
+                                                data.pipe.material.sig_y,
+                                                data.pipe.D_o,
+                                                data.process.P_d,
+                                                P_o_min,
+                                                P_h_t)
+
+        # Leak test pressure
         P_lt = calculate_leak_test_pressure(data.process.P_d)
 
-        return {"P_st": P_st,
-                "P_lt": P_lt}
+        # Populate dictionary of results
+        self.results["t_r_nom"] = t_r_nom
+        self.results["t_h_nom"] = t_h_nom
+        self.results["t_h_nom_bt"] = t_h_nom_bt
+        self.results["t_c_nom"] = t_c_nom
+        self.results["t_b_nom"] = t_b_nom
+        self.results["t_rec"] = t_rec
+        self.results["P_st"] = P_st
+        self.results["P_lt"] = P_lt
+
+    def __str__(self):
+        return """{0}
+
+Wall Thickness Design
+=====================
+
+Pipeline: {1}
+
+Reeling Criterion:                               {2:0.2f} mm
+Pressure Containment:                            {3:0.2f} mm
+Pressure Containment (incl. bend thinning):      {4:0.2f} mm
+Hydrostatic Collapse:                            {5:0.2f} mm
+Propagation buckling:                            {6:0.2f} mm
+
+Minimum Recommended API Wall Thickness:          {7:0.2f} mm
+Selected Wall Thickness:                         {8:0.2f} mm
+
+Strength Test Pressure:                          {9:0.2f} bar
+Leak Test Pressure:                              {10:0.2f} bar
+""".format(datetime.date.today(),
+           self.data.name,
+           1000*self.results["t_r_nom"],
+           1000*self.results["t_h_nom"],
+           1000*self.results["t_h_nom_bt"],
+           1000*self.results["t_c_nom"],
+           1000*self.results["t_b_nom"],
+           1000*self.results["t_rec"],
+           1000*self.data.pipe.t_sel,
+           1e-5*self.results["P_st"],
+           1e-5*self.results["P_lt"])
 
     def write_results(self):
         """
-        Print results to text file
+        Write results to text file.
         """
 
-        results = """Wall Thickness Design
-=====================
-
-Pipeline: {0}
-
-Reeling Criterion:                               {1:0.2f} mm
-Pressure Containment:                            {2:0.2f} mm
-Pressure Containment (incl. bend thinning):      {3:0.2f} mm
-Hydrostatic Collapse:                            {4:0.2f} mm
-Propagation buckling:                            {5:0.2f} mm
-
-Minimum Recommended API Wall Thickness:          {6:0.2f} mm
-Selected Wall Thickness:                         {7:0.2f} mm
-
-Strength Test Pressure:                          {8:0.2f} bar
-Leak Test Pressure:                              {9:0.2f} bar
-""".format(self.data.name,
-           1000*self.results["thicknesses"]["t_r_nom"],
-           1000*self.results["thicknesses"]["t_h_nom"],
-           1000*self.results["thicknesses"]["t_h_nom_bt"],
-           1000*self.results["thicknesses"]["t_c_nom"],
-           1000*self.results["thicknesses"]["t_b_nom"],
-           1000*self.results["thicknesses"]["t_rec"],
-           1000*self.data.pipe.t_sel,
-           1e-5*self.results["test_pressures"]["P_st"],
-           1e-5*self.results["test_pressures"]["P_lt"])
-
         with open("results/{} Results.txt".format(self.data.name), "w") as out:
-            out.write(results)
+            out.write(str(self))
 
     def plot_results(self):
         """

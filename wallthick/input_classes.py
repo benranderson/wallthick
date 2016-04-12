@@ -14,6 +14,9 @@ class InputData:
         self.process = process
         self.environment = environment
 
+    def __str__(self):
+        return "Input data for {}".format(self.name)
+
 
 class Pipe:
     """Class compiling pipe data"""
@@ -44,11 +47,6 @@ class Environment:
         self.rho_w = rho_w
         self.g = g
 
-    def hydro_pressure(self, d):
-        """-> Number [Pa]
-        Calculate the hydrostatic external pressure at water depth"""
-        return self.rho_w*self.g*d
-
 
 class Process:
     """Class compiling process data"""
@@ -63,7 +61,9 @@ class Process:
 
 
 def read_input_data(case):
-    """ Module -> InputData
+    """
+    Module -> InputData
+
     Function to initialise input classes from input case and return InputData
     object
     """
@@ -99,7 +99,7 @@ def read_input_data(case):
 
         return data
 
-    except TypeError:
+    except AttributeError:
         print("Provided input case parameter not a module")
         raise
 
