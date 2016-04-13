@@ -10,75 +10,91 @@ from input_data_files.db_materials import materials
 
 
 @pytest.fixture(params=[
-    # tuple with (P_d, rho_d, g, d, h_ref, expected)
-    (179.3e5, 1025, 9.80665, 80.5, 0, 187.392e5),
+    # tuple with (rho, g, d, h_ref, expected)
+    (1025, 9.81, 100, 0, 10.05525e5),
     ])
-def test_internal_pressure_data(request):
+def test_pressure_head_data(request):
     return request.param
-
-
-def test_internal_pressure(test_internal_pressure_data):
-    (P_d, rho_d, g, d, h_ref, expected) = test_internal_pressure_data
-    assert abs(pd8010.internal_pressure(P_d, rho_d, g, d,
-                                        h_ref) - expected) < 100
+def test_pressure_head(test_pressure_head_data):
+    (rho, g, d, h_ref, expected) = test_pressure_head_data
+    assert abs(pd8010.pressure_head(rho, g, d, h_ref) - expected) < (expected/10e5)
 
 
 def test_allowable_stress():
     assert pd8010.allowable_stress(100) == 72
 
-"""
--------------------------
-"""
+
+@pytest.fixture(params=[
+    # tuple with (t, D_o, P_o, sig, expected)
+    (9.713e-3, 219.1e-3, P_o, 405, 187.392e5),
+    ])
+def test_hoop_pressure_thin_data(request):
+    return request.param
+def test_hoop_pressure_thin(test_hoop_pressure_thin_data):
+    (t, D_o, P_o, sig, expected) = test_hoop_pressure_thin_data
+    assert abs(pd8010.hoop_pressure_thin(t, D_o, P_o, sig) - expected) < (expected/10e5)
 
 
 @pytest.fixture(params=[
-    # tuple with (P_i, P_o, D_o, sig_h_a, expected)
+    # tuple with (t, D_o, P_o, sig, expected)
+    (t, D_o, P_o, sig, 187.392e5),
+    ])
+def test_hoop_pressure_thick_data(request):
+    return request.param
+def test_hoop_pressure_thick(test_hoop_pressure_thick_data):
+    (t, D_o, P_o, sig, expected) = test_hoop_pressure_thick_data
+    assert abs(pd8010.hoop_pressure_thin(t, D_o, P_o, sig) - expected) < (expected/10e5)
+
+
+@pytest.fixture(params=[
+    # tuple with (P_i, P_o, D_o, sig_A, expected)
     (187.392e5, 809171.21, 219.1e-3, 324e6, 6.06e-3)
     ])
 def test_hoop_thickness_thin_data(request):
     return request.param
-
-
 def test_hoop_thickness_thin(test_hoop_thickness_thin_data):
-    (P_i, P_o, D_o, sig_h_a, expected) = test_hoop_thickness_thin_data
+    (P_i, P_o, D_o, sig_A, expected) = test_hoop_thickness_thin_data
     assert abs(pd8010.hoop_thickness_thin(P_i, P_o, D_o,
-                                          sig_h_a) - expected) < 1e-6
+                                          sig_A) - expected) < 1e-6
 
 
 @pytest.fixture(params=[
-    # tuple with (P_i, P_o, D_o, sig_h_a, expected)
+    # tuple with (P_i, P_o, D_o, sig_A, expected)
     (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3)
     ])
 def test_hoop_thickness_thick_data(request):
     return request.param
-
-
 def test_hoop_thickness_thick(test_hoop_thickness_thick_data):
-    (P_i, P_o, D_o, sig_h_a, expected) = test_hoop_thickness_thick_data
+    (P_i, P_o, D_o, sig_A, expected) = test_hoop_thickness_thick_data
     assert abs(pd8010.hoop_thickness_thick(P_i, P_o, D_o,
-                                           sig_h_a) - expected) < 1e-6
+                                           sig_A) - expected) < 1e-6
+
+
+@pytest.fixture(params=[
+    # tuple with (P_i, P_o_min, D_o, sig_A, expected)
+    (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3)
+    ])
+def test_hoop_thickness_data(request):
+    return request.param
+def test_hoop_thickness_thick(test_hoop_thickness_data):
+    (P_i, P_o_min, D_o, sig_A, expected) = test_hoop_thickness_data
+    assert abs(pd8010.hoop_thickness_thick(P_i, P_o_min, D_o,
+                                           sig_A) - expected) < 1e-6
+
 
 @pytest.fixture(params=[
     # tuple with (t, t_corr, f_tol, expected)
     (2, 2, 0, 4),
-    (1, 1, 1, "Divide by zero")
     ])
 def test_data(request):
     return request.param
-
-
 def test_req_thickness(test_data):
     (t, t_corr, f_tol, expected) = test_data
-
-    if expected == "Divide by zero":
-        with pytest.raises(ZeroDivisionError):
-            pd8010.req_thickness(t, t_corr, f_tol)
-    else:
-        assert pd8010.req_thickness(t, t_corr, f_tol) == expected
-
-"""
--------------------------
-"""
+    assert pd8010.req_thickness(t, t_corr, f_tol) == expected
+def test_req_thickness_zerodiv(test_data):
+    with pytest.raises(ZeroDivisionError):
+            pd8010.req_thickness(1, 1, 1, "Divide by zero. Check fabrication "
+                                 "tolerance.")
 
 
 @pytest.fixture(params=[
@@ -87,16 +103,10 @@ def test_req_thickness(test_data):
     ])
 def test_collapse_thickness_data(request):
     return request.param
-
-
 def test_collapse_thickness(test_collapse_thickness_data):
     (P_o, sig_y, E, v, D_o, f_0, expected) = test_collapse_thickness_data
     assert abs(pd8010.collapse_thickness(P_o, sig_y, E, v, D_o,
                                          f_0) - expected) < 1e-6
-
-"""
--------------------------
-"""
 
 
 @pytest.fixture(params=[
@@ -105,15 +115,9 @@ def test_collapse_thickness(test_collapse_thickness_data):
     ])
 def test_buckle_thickness_data(request):
     return request.param
-
-
 def test_buckle_thickness(test_buckle_thickness_data):
     (D_o, P_p, sig_y, expected) = test_buckle_thickness_data
     assert abs(pd8010.buckle_thickness(D_o, P_p, sig_y) - expected) < 1e-6
-
-"""
--------------------------
-"""
 
 
 @pytest.fixture(params=[
@@ -123,12 +127,35 @@ def test_buckle_thickness(test_buckle_thickness_data):
     ])
 def test_reeling_thickness_data(request):
     return request.param
-
-
 def test_reeling_thickness(test_reeling_thickness_data):
     (D_o, R_reel, t_coat, expected) = test_reeling_thickness_data
     assert abs(pd8010.reeling_thickness(D_o, R_reel,
                                         t_coat) - expected) < 1e-5
+
+
+@pytest.fixture(params=[
+    # tuple with (t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h, expected)
+    (t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h, expected),
+    ])
+def test_strength_test_pressure_data(request):
+    return request.param
+def test_strength_test_pressure(test_strength_test_pressure_data):
+    (t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h,
+     expected) = test_strength_test_pressure_data
+    assert abs(pd8010.strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d,
+                                             P_o, P_h) - expected) < (P_d/10e5)
+
+
+@pytest.fixture(params=[
+    # tuple with (P_d, expected)
+    (100e5, 110e5),
+    (0, 0)
+    ])
+def test_leak_test_pressure_data(request):
+    return request.param
+def test_leak_test_pressure(test_leak_test_pressure_data):
+    (P_d, expected) = test_leak_test_pressure_data
+    assert abs(pd8010.leak_test_pressure(P_d) - expected) < (P_d/10e5)
 
 
 @pytest.fixture(scope='class', params=[

@@ -29,21 +29,6 @@ def pressure_head(rho, g, d, h_ref):
     """
     return rho*g*(d + h_ref)
 
-
-# 6.4.1 Design Factors (Table 2)
-# ==============================
-
-# Hoop Stress
-df_h = 0.72
-
-# Equivalent stress
-df_e = {'Temporary': 1.0,
-        'Operational': 0.96}
-
-# Strain factor for reeling (based on previous project experience)
-df_s = 0.67
-
-
 # 6.4.2.1 Allowable Stress
 # ========================
 
@@ -56,6 +41,8 @@ def allowable_hoop_stress(sig_y):
 
     Equation (2)
     """
+    # Hoop stress design factor from Table 2
+    df_h = 0.72
     return df_h * sig_y
 
 
@@ -238,6 +225,9 @@ def reeling_thickness(D_o, R_reel, t_coat):
     Applicable for a pipe bent around a curvature on a vessel during
     installation.
     """
+    # Strain factor for reeling (based on previous project experience)
+    df_s = 0.67
+
     if R_reel > 0:
         # Functional strain from bending around vessel reel radius
         epsilon_b = D_o / (2*(R_reel + 0.5*D_o + t_coat))
@@ -253,7 +243,7 @@ def reeling_thickness(D_o, R_reel, t_coat):
 # =========================
 
 
-def calculate_strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h):
+def strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h):
     """
     InputData -> Number [Pa]
 
@@ -286,7 +276,7 @@ def calculate_strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h):
     return min(P_hoop, P_test)
 
 
-def calculate_leak_test_pressure(P_d):
+def leak_test_pressure(P_d):
     """
     Number [Pa] -> Number [Pa]
 
@@ -315,7 +305,7 @@ class WallThick:
 
     def __init__(self, data):
         """
-        Initialises and runs wall thickness calculations
+        Initialises and runs wall thickness calculations.
         """
 
         # Associate input data with design calculation object
@@ -381,16 +371,16 @@ class WallThick:
                               data.environment.d_min, data.process.h_ref)
 
         # Strength test pressure
-        P_st = calculate_strength_test_pressure(data.pipe.t_sel,
-                                                data.pipe.f_tol,
-                                                data.pipe.material.sig_y,
-                                                data.pipe.D_o,
-                                                data.process.P_d,
-                                                P_o_min,
-                                                P_h_t)
+        P_st = strength_test_pressure(data.pipe.t_sel,
+                                      data.pipe.f_tol,
+                                      data.pipe.material.sig_y,
+                                      data.pipe.D_o,
+                                      data.process.P_d,
+                                      P_o_min,
+                                      P_h_t)
 
         # Leak test pressure
-        P_lt = calculate_leak_test_pressure(data.process.P_d)
+        P_lt = leak_test_pressure(data.process.P_d)
 
         # Populate dictionary of results
         self.results["t_r_nom"] = t_r_nom
