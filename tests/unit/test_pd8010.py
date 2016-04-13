@@ -195,12 +195,11 @@ class TestWallThick:
     #      expected_t_b_nom, expected_t_rec, expected_P_st,
     #      expected_P_lt) = wallthick_data
 
-    def test_run_analysis(self, wallthick_data):
+    def test_t_r_nom(self, wallthick_data):
         (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
          expected_t_b_nom, expected_t_rec, expected_P_st,
          expected_P_lt) = wallthick_data
-        results = wallthick.results
-        assert abs(results["thicknesses"]["t_r_nom"] - expected_t_r_nom) < 1e-5
+        assert abs(wallthick.results["t_r_nom"] - expected_t_r_nom) < 1e-5
 
     # def test_write_results(self, tmpdir, wallthick_data):
     #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
@@ -211,37 +210,3 @@ class TestWallThick:
     #     wallthick.write_results()
     #     assert p.read() == "content"
     #     assert len(tmpdir.listdir()) == 1
-
-    # def test_initial_calcs(self, wallthick_data):
-    #     results = wallthick_data[0].results
-    #     assert isinstance(results, dict)
-
-    # def test_thickness_reel(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.t_r_nom - expected_t_r_nom) < 1e-5
-
-    # def test_thickness_hoop(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.t_h_nom - expected_t_h_nom) < 1e-5
-
-    # def test_thickness_collapse(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.t_c_nom - expected_t_c_nom) < 1e-5
-
-    # def test_thickness_buckle(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.t_b_nom - expected_t_b_nom) < 1e-5
-
-    # def test_strength_test_pressure(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.P_st - expected_P_st) < 1e4
-
-    # def test_leak_test_pressure(self, wallthick_data):
-    #     (wallthick, expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
-    #      expected_t_b_nom, expected_P_st, expected_P_lt) = wallthick_data
-    #     assert abs(wallthick.P_lt - expected_P_lt) < 1e4
