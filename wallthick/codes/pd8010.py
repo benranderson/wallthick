@@ -9,7 +9,6 @@ import datetime
 import wallthick.codes.dnvf101 as dnvf101
 import wallthick.codes.api5l as api5l
 
-
 # General Code Information
 # ========================
 
