@@ -40,7 +40,7 @@ if __name__ == "__main__":  # pragma: no cover
     pass
 ```
 
-Produce text output:
+Generate output in results text file:
 
 ```
 2017-01-27
