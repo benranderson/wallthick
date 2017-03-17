@@ -9,7 +9,7 @@ INPUT DATA FILE
 ===============
 """
 
-name = "Shell 20in"
+name = "20in X65"
 
 # Pipe
 t_sel = 0.0143  # Selected wall thickness [m]
@@ -48,7 +48,7 @@ Generate output in results text file:
 Wall Thickness Design
 =====================
 
-Pipeline: Shell 20in
+Pipeline: 20in X65
 
 Reeling Criterion:                               0.00 mm
 Pressure Containment:                            13.68 mm
