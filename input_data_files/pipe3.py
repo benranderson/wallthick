@@ -3,7 +3,7 @@ INPUT DATA FILE
 ===============
 """
 
-name = "Shell 20in"
+name = "20in X65"
 
 # Pipe
 t_sel = 0.0143  # Selected wall thickness [m]

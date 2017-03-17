@@ -3,7 +3,7 @@ INPUT DATA FILE
 ===============
 """
 
-name = "Aviat 8in X65"
+name = "8in X65"
 
 # Pipe
 t_sel = 0.0111  # Selected wall thickness [m]

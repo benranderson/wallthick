@@ -1,7 +1,9 @@
+2017-03-17
+
 Wall Thickness Design
 =====================
 
-Pipeline: Aviat 4in X65
+Pipeline: 4in X65
 
 Reeling Criterion:                               3.13 mm
 Pressure Containment:                            5.33 mm
@@ -9,8 +11,8 @@ Pressure Containment (incl. bend thinning):      5.92 mm
 Hydrostatic Collapse:                            1.70 mm
 Propagation buckling:                            2.91 mm
 
-Minimum Recommended Wall Thickness:              6.00 mm
+Minimum Recommended API Wall Thickness:          6.00 mm
 Selected Wall Thickness:                         6.40 mm
 
-Strength Test Pressure:                          268.95 bar
+Strength Test Pressure:                          277.04 bar
 Leak Test Pressure:                              197.23 bar
