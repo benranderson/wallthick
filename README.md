@@ -2,7 +2,9 @@
 
 Calculate the required wall thickness of a single walled subsea flowline in accordance with allowable stress design code [PD 8010-2](https://shop.bsigroup.com/ProductDetail?pid=000000000030344663).
 
-## Installation
+## Installation (OS X)
+
+Clone repository:
 
 ```sh
 $ git clone https://github.com/benranderson/wallthick.git
