@@ -4,16 +4,19 @@ Calculate the required wall thickness of a single walled subsea flowline in acco
 
 ## Installation
 
-'''sh
+```sh
 $ git clone https://github.com/benranderson/wallthick.git
 ```
 
 Install dependencies:
-'''sh
+
+```sh
 $ make Makefile
 ```
 
 ## Usage Example
+
+Import module:
 
 ```python
 >>> import wallthick as wt
