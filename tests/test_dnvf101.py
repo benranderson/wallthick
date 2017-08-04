@@ -1,6 +1,5 @@
 import pytest
-# from tests.unit.test_headers import *
-import wallthick.codes.dnvf101 as dnvf101
+from .context import dnvf101
 
 
 @pytest.fixture(params=[
@@ -12,7 +11,7 @@ import wallthick.codes.dnvf101 as dnvf101
     ("CS X52", 450e6, 125, 410e6),
     ("22Cr", 450e6, 100, 360e6),
     ("Wrong Input", 450e6, 100, "Value Error"),
-    ])
+])
 def test_derate_material_data(request):
     return request.param
 
@@ -42,7 +41,7 @@ def test_t_2():
     ("dnv", 1000e-3, 100e-3, 0, 0.01),
     ("dnv", 1000e-3, 4e-3, 2e-3, 0),
     (0.1, 0, 0, 0, 0.1)
-    ])
+])
 def test_ovality_data(request):
     return request.param
 
@@ -55,7 +54,7 @@ def test_ovality(test_ovality_data):
 @pytest.fixture(params=[
     # tuple with (H, delta_P, A_i, v, A_s, E, alpha, delta_T, expected)
     (0, 0, 0, 0, 0, 0, 0, 0, 0),
-    ])
+])
 def effective_axial_force_data(request):
     return request.param
 

@@ -1,4 +1,0 @@
-- wallthick.plot_results
-- GUI - PyQt
-- test thick wall x2
-- explict relative imports

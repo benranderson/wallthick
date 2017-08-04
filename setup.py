@@ -1,10 +1,22 @@
-try:
-    import paver.tasks
-except ImportError:
-    from os.path import exists
-    if exists("paver-minilib.zip"):
-        import sys
-        sys.path.insert(0, "paver-minilib.zip")
-    import paver.tasks
+# -*- coding: utf-8 -*-
 
-paver.tasks.main()
+from setuptools import setup, find_packages
+
+
+with open('README.md') as f:
+    readme = f.read()
+
+with open('LICENSE') as f:
+    license = f.read()
+
+setup(
+    name='wallthick',
+    version='0.0.0',
+    description='PD8010 wall thickness calculations',
+    long_description=readme,
+    author='Ben Randerson',
+    author_email='ben.m.randerson@gmail.com',
+    url='https://github.com/benranderson/wallthick',
+    license=license,
+    packages=find_packages(exclude=('tests', 'docs'))
+)
