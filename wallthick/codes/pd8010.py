@@ -16,7 +16,7 @@ title = "PD 8010-2"
 year = 2015
 
 
-# General Calcuations
+# General Calculation
 # ===================
 
 
@@ -289,7 +289,7 @@ def leak_test_pressure(P_d):
 
 class WallThick:
     """
-    Calculate the required wall thickness of a single walled flowline
+    Calculate the required wall thickness of a single walled pipeline
     installed on the seabed in accordance with allowable stress design code
     PD 8010.
 
