@@ -10,4 +10,4 @@ python:
 # command to install dependencies
 install: "make"
 # command to run tests
-script: "make setup-dev make test"
+script: "make test"
