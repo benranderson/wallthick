@@ -1,13 +1,12 @@
 language: python
 python:
-  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
-  # - "3.7-dev"
-  # - "pypy"  -- appears to hang
-  # - "pypy3"
 # command to install dependencies
-install: "make"
+install:
+  - make
+  - make setup-dev
 # command to run tests
-script: "make test"
+script:
+  - make test
