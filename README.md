@@ -15,7 +15,7 @@ $ git clone https://github.com/benranderson/wallthick.git
 Install dependencies:
 
 ```sh
-$ make Makefile
+$ make
 ```
 
 ## Usage Example
@@ -30,7 +30,7 @@ Set pipe parameters:
 
 ```python
 >>> pipe = wt.Pipe(t_sel=0.0143, D_o=508e-3, t_corr=1.5e-3, f_tol=0.125, f_0=0.025,
-                   B=0, mat_p="CS X65", t_coat=0)
+                   B=0, material="CS X65", t_coat=0)
 ```
 Where:
 * t_sel = Selected wall thickness [m]
@@ -39,7 +39,7 @@ Where:
 * f_tol = Fabrication tolerance [-]
 * f_0 = Initial ovalisation [-]
 * B = Bend thinning [-]
-* mat_p = Pipe material
+* material = Pipe material
 * t_coat = Overall coating thickness [m]
 
 Set process conditions:
@@ -116,13 +116,13 @@ Where:
 Install dependencies:
 
 ```sh
-$ make Makefile setup-dev
+$ make setup-dev
 ```
 
 Run tests:
 
 ```sh
-$ make Makefile test
+$ make test
 ```
 
 ## To Do

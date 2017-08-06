@@ -8,3 +8,5 @@ import wallthick.inputs as inputs
 import wallthick.api5l as api5l
 import wallthick.pd8010 as pd8010
 import wallthick.dnvf101 as dnvf101
+
+from wallthick.inputs import Pipe, Process, Environment

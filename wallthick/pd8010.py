@@ -8,6 +8,7 @@ import scipy.optimize
 import datetime
 from . import dnvf101
 from . import api5l
+from .inputs import material_dict
 
 # General Code Information
 # ========================
@@ -292,7 +293,7 @@ class Pd8010:
     """
     Calculate the required wall thickness of a single walled flowline
     installed on the seabed in accordance with allowable stress design code
-    PD 8010.
+    PD 8010-2.
 
     Considers the following criteria:
     1. Reeling (if applicable)
@@ -300,12 +301,12 @@ class Pd8010:
     3. Local buckling (collapse)
     4. Propagation buckling
 
-    Also determines the hydrostatic strength and leak test pressures.
+    Also determines recommended hydrostatic strength and leak test pressures.
     """
 
     def __init__(self, pipe, process, env):
         """
-        Initialises and runs wall thickness calculations.
+        Initialise and run wall thickness calculations
         """
 
         # Associate input data with design calculation object
@@ -314,80 +315,112 @@ class Pd8010:
         self.env = env
 
         # Run initial calculations
-        sig_y_d, P_h_d, P_i, P_o = self._initial_calculations()
-        P_o_min, P_o_max = P_o
+        prelim_vals = self._prelim_calcs()
+
+        # Determine nominal wall thicknesses
+        self.wallthicks = self._thickness_calcs(prelim_vals)
+
+        # Determine test pressures
+        self.pressures = self._test_pressure_calcs(
+            prelim_vals["P_o_min"])
+
+    def _prelim_calcs(self):
+        '''
+        Initial calculations
+        '''
+
+        prelim_vals = {}
+
+        # Determine derated yield strength
+        sig_y = material_dict[self.pipe.material].sig_y
+        prelim_vals["sig_y_d"] = dnvf101.derate_material(self.pipe.material,
+                                                         sig_y,
+                                                         self.process.T_d)
+
+        # Pressure head
+        prelim_vals["P_h_d"] = pressure_head(self.process.rho_d, self.env.g,
+                                             self.env.d_min, self.process.h_ref)
+
+        # Calculate internal pressure at seabed
+        prelim_vals["P_i"] = self.process.P_d + prelim_vals["P_h_d"]
+
+        # Calculate characteristic external pressures
+        prelim_vals["P_o_min"] = pressure_head(self.env.rho_w, self.env.g,
+                                               self.env.d_min, 0)
+        prelim_vals["P_o_max"] = pressure_head(self.env.rho_w, self.env.g,
+                                               self.env.d_max, 0)
+
+        return prelim_vals
+
+    def _thickness_calcs(self, prelim_vals):
+        '''
+        Wall thickness calculations
+        '''
+
+        wallthicks = {}
 
         # Reeling Criteria
-        self.t_r_nom = reeling_thickness(self.pipe.D_o, self.process.R_reel,
-                                         self.pipe.t_coat)
+        wallthicks["t_r_nom"] = reeling_thickness(
+            self.pipe.D_o, self.process.R_reel, self.pipe.t_coat)
 
         # Hoop Criteria
-        sig_A = allowable_hoop_stress(sig_y_d)
-        self.t_h_min = hoop_thickness(P_i, P_o_min, self.pipe.D_o, sig_A)
-        self.t_h_nom = req_thickness(
-            self.t_h_min, self.pipe.t_corr, self.pipe.f_tol)
-        self.t_h_nom_bt = self.t_h_nom / (1 - self.pipe.B)  # Bend thinning
+        sig_A = allowable_hoop_stress(prelim_vals["sig_y_d"])
+        t_h_min = hoop_thickness(
+            prelim_vals["P_i"], prelim_vals["P_o_min"], self.pipe.D_o, sig_A)
+        wallthicks["t_h_nom"] = req_thickness(t_h_min,
+                                              self.pipe.t_corr,
+                                              self.pipe.f_tol)
+        wallthicks["t_h_nom_bt"] = wallthicks["t_h_nom"] / \
+            (1 - self.pipe.B)  # Bend thinning
 
         # Hydrostatic Collapse
-        self.t_c_nom = collapse_thickness(P_o_max, sig_y_d,
-                                          self.pipe.material.E,
-                                          self.pipe.material.v,
-                                          self.pipe.D_o,
-                                          self.pipe.f_0)
+        E = material_dict[self.pipe.material].E
+        v = material_dict[self.pipe.material].v
+        wallthicks["t_c_nom"] = collapse_thickness(prelim_vals["P_o_max"],
+                                                   prelim_vals["sig_y_d"],
+                                                   E,
+                                                   v,
+                                                   self.pipe.D_o,
+                                                   self.pipe.f_0)
 
         # Local Buckle Propagation
-        self.t_b_nom = buckle_thickness(self.pipe.D_o, P_o_max, sig_y_d)
+        wallthicks["t_b_nom"] = buckle_thickness(
+            self.pipe.D_o, prelim_vals["P_o_max"], prelim_vals["sig_y_d"])
 
         # Recommended API 5L wall thickness
-        max_t_nom = max(self.t_r_nom, self.t_h_nom, self.t_h_nom_bt,
-                        self.t_c_nom, self.t_b_nom)
-        self.t_rec = api5l.recommended_wall_thickness(self.pipe.D_o, max_t_nom)
+        max_t_nom = max(wallthicks["t_r_nom"], wallthicks["t_h_nom"],
+                        wallthicks["t_h_nom_bt"], wallthicks["t_c_nom"],
+                        wallthicks["t_b_nom"])
+        wallthicks["t_rec"] = api5l.recommended_wall_thickness(
+            self.pipe.D_o, max_t_nom)
 
-        # TEST PRESSURES
-        # --------------
+        return wallthicks
+
+    def _test_pressure_calcs(self, P_o_min):
+        '''
+        Test pressure calculations
+        '''
+
+        pressures = {}
 
         # Pressure head
         P_h_t = pressure_head(1025, self.env.g,
                               self.env.d_min, self.process.h_ref)
 
         # Strength test pressure
-        self.P_st = strength_test_pressure(self.pipe.t_sel,
-                                           self.pipe.f_tol,
-                                           self.pipe.material.sig_y,
-                                           self.pipe.D_o,
-                                           self.process.P_d,
-                                           P_o_min,
-                                           P_h_t)
+        sig_y = material_dict[self.pipe.material].sig_y
+        pressures["P_st"] = strength_test_pressure(self.pipe.t_sel,
+                                                   self.pipe.f_tol,
+                                                   sig_y,
+                                                   self.pipe.D_o,
+                                                   self.process.P_d,
+                                                   P_o_min,
+                                                   P_h_t)
 
         # Leak test pressure
-        self.P_lt = leak_test_pressure(self.process.P_d)
+        pressures["P_lt"] = leak_test_pressure(self.process.P_d)
 
-    def _initial_calculations(self):
-        '''
-        INITIAL CALCULATIONS
-        '''
-
-        # Determine derated yield strength
-        sig_y_d = dnvf101.derate_material(self.pipe.material.name,
-                                          self.pipe.material.sig_y,
-                                          self.process.T_d)
-
-        # Pressure head
-        P_h_d = pressure_head(self.process.rho_d, self.env.g,
-                              self.env.d_min, self.process.h_ref)
-
-        # Calculate internal pressure at seabed
-        P_i = self.process.P_d + P_h_d
-
-        # Calculate characteristic external pressures
-        P_o_min = pressure_head(self.env.rho_w, self.env.g,
-                                self.env.d_min, 0)
-        P_o_max = pressure_head(self.env.rho_w, self.env.g,
-                                self.env.d_max, 0)
-
-        P_o = (P_o_min, P_o_max)
-
-        return sig_y_d, P_h_d, P_i, P_o
+        return pressures
 
     def __str__(self):
         return """{0}

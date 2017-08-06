@@ -44,9 +44,6 @@ def derate_material(grade, sig_y, temp):
     """ String, Number [Pa], Number [degC] -> Number [Pa]
     Function to return derated yield stress based on temperature """
 
-    # To Do...
-    # - Move plot to separate function
-
     # x-axis:
     temperatures = [0, 25, 50, 100, 150, 200]
 
@@ -69,6 +66,10 @@ def derate_material(grade, sig_y, temp):
     f = interp1d(temperatures, derating, bounds_error=False,
                  fill_value=max(derating))
 
+    return sig_y - f(temp)
+
+
+def plot_derate():
     # # Plot Stress Derating Curve
     # x = []
     # y = []
@@ -83,8 +84,7 @@ def derate_material(grade, sig_y, temp):
     # plt.ylabel('Strength Derating [Pa]')
     # plt.legend(loc=0)
     # plt.savefig('Material Strength Derating.png')
-
-    return sig_y - f(temp)
+    pass
 
 
 def t_1(t_nom, fab_tol, t_cor):
@@ -114,7 +114,7 @@ def ovality(fab_ov, D_o, t_nom, t_cor):
             ov = 0.015
         elif D_o > 610e-3 and D_o <= 1422e-3:
             if D_o / t_2(t_nom, t_cor) <= 75:
-                ov = min(0.01, 10e-3/D_o)
+                ov = min(0.01, 10e-3 / D_o)
             else:
                 ov = 0.0
     else:
@@ -129,8 +129,8 @@ def effective_axial_force(H, delta_P, A_i, v, A_s, E, alpha, delta_T):  # pragma
     Determine the effective axial force of a totally restrained pipe in
     the linear elastic stress range """
 
-    pressure_term = delta_P*A_i*(1-2*v)
-    temperature_term = A_s*E*alpha*delta_T
+    pressure_term = delta_P * A_i * (1 - 2 * v)
+    temperature_term = A_s * E * alpha * delta_T
 
     return H - pressure_term - temperature_term
 
