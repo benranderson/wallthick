@@ -1,55 +1,46 @@
-from __future__ import print_function
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
-import io
-import codecs
-import os
-import sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""The setup script."""
 
 import wallthick
 
-here = os.path.abspath(os.path.dirname(__file__))
+from setuptools import setup, find_packages
 
+with open('README.md') as readme_file:
+    readme = readme_file.read()
 
-def read(*filenames, **kwargs):
-    encoding = kwargs.get('encoding', 'utf-8')
-    sep = kwargs.get('sep', '\n')
-    buf = []
-    for filename in filenames:
-        with io.open(filename, encoding=encoding) as f:
-            buf.append(f.read())
-    return sep.join(buf)
+requirements = [
+    # TODO: put package requirements here
+]
 
+setup_requirements = [
+    'pytest-runner',
+    # TODO(benranderson): put setup requirements (distutils extensions, etc.) here
+]
 
-long_description = read('README.md')
+test_requirements = [
+    'pytest',
+    # TODO: put package test requirements here
+]
 
-
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
-        sys.exit(errcode)
+# long_description = read('README.md')
 
 
 setup(
     name='wallthick',
     version=wallthick.__version__,
-    url='https://github.com/benranderson/wallthick',
-    license='MIT License',
+    description='PD8010 wall thickness calculations',
+    long_description=readme,
     author='Ben Randerson',
     author_email='ben.m.randerson@gmail.com',
-    description='PD8010 wall thickness calculations',
-    long_description=long_description,
+    url='https://github.com/benranderson/wallthick',
+    packages=find_packages(include=['wallthick']),
+    include_package_data=True,
+    install_requires=requirements,
+    license='MIT License',
+    zip_safe=False,
     keywords='wall thickness engineering pipelines',
-    packages=['wallthick'],
-    test_suite='tests',
-    tests_require=['pytest'],
-    cmdclass={'test': PyTest},
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Other Audience',
@@ -59,7 +50,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
-    extras_require={
-        'testing': ['pytest'],
-    }
+    test_suite='tests',
+    tests_require=test_requirements,
+    setup_requires=setup_requirements,
 )
