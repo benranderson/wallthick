@@ -2,12 +2,18 @@
 
 language: python
 python:
-  - 3.4
-  - 3.5
-  - 3.6
+    - 3.4
+    - 3.5
+    - 3.6
 
 # command to install dependencies
-install: pip install -r requirements/prod.txt
+install:
+    - pip install -r requirements/prod.txt
 
 # command to run tests
-script: make test
+script:
+    - pip install coveralls
+    - make test
+
+after_success:
+    - coveralls
