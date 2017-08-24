@@ -136,6 +136,6 @@ $ make test
 [travis-image]: https://travis-ci.org/benranderson/wallthick.svg?branch=master
 [travis-url]: https://travis-ci.org/benranderson/wallthick
 [coveralls-image]:
-https://coveralls.io/repos/github/benranderson/wallthick/badge.png?branch=master
-[coveralls-url]:
 https://coveralls.io/repos/github/benranderson/wallthick/badge.svg?branch=master
+[coveralls-url]:
+https://coveralls.io/github/benranderson/wallthick?branch=master
