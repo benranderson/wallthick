@@ -24,18 +24,6 @@ def read(*filenames, **kwargs):
 long_description = read('README.md')
 
 
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
-        sys.exit(errcode)
-
-
 setup(
     name='wallthick',
     version=wallthick.__version__,
@@ -48,8 +36,8 @@ setup(
     keywords='wall thickness engineering pipelines',
     packages=['wallthick'],
     test_suite='tests',
+    setup_requires=['pytest-runner'],
     tests_require=['pytest'],
-    cmdclass={'test': PyTest},
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Other Audience',
@@ -58,8 +46,6 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-    ],
-    extras_require={
-        'testing': ['pytest'],
-    }
+    ]
+
 )
