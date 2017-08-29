@@ -4,6 +4,25 @@ import pytest
 
 tol_pc = 0.01
 
+test_data = {
+    "f_tol": 0.0125,
+    "B": 0,
+    "t_corr": 0,
+    "D_o": 0.0603,
+    "material": "CS X65",
+    "f_0": 0.0025,
+    "rho_w": 1027,
+    "d_max": 114.5,
+    "d_min": 87.5,
+    "P_d": 861.8,
+    "T_d": 0,
+    "sig_y_d": 450,
+    "P_h": 0,
+    "P_o_min": 8.816,
+    "P_o_max": 11.536,
+    ""
+}
+
 
 @pytest.mark.parametrize("rho, g, d, h_ref, expected", [
     (1025, 9.81, 100, 0, 10.05525e5),

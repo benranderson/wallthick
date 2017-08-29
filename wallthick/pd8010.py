@@ -123,23 +123,6 @@ def hoop_thickness(P_i, P_o_min, D_o, sig_A):
     return t_min
 
 
-def req_thickness(t_min, t_corr, f_tol):
-    """
-    Number [m], Number [m], Number [-] -> Number [m]
-
-    Returns the required wall thickness based on the following mechanical
-    allowances:
-    - Corrosion allowance
-    - Fabrication tolerance
-
-    Exrapolated from Equation (4)
-    """
-    try:
-        return (t_min + t_corr) / (1 - f_tol)
-    except ZeroDivisionError:
-        raise ZeroDivisionError("Divide by zero. Check fabrication tolerance.")
-
-
 # G.1.2 External Pressure - Hydrostatic Collapse
 # ==============================================
 
@@ -314,64 +297,94 @@ class Pd8010:
         self.process = process
         self.env = env
 
-        # Run initial calculations
-        prelim_vals = self._prelim_calcs()
-
-        # Determine nominal wall thicknesses
-        self.wallthicks = self._thickness_calcs(prelim_vals)
-
-        # Determine test pressures
-        self.pressures = self._test_pressure_calcs(
-            prelim_vals["P_o_min"])
-
-    def _prelim_calcs(self):
+    @property
+    def sig_y_d(self):
         '''
-        Initial calculations
+        Return derated yield strength
         '''
-
-        prelim_vals = {}
-
-        # Determine derated yield strength
         sig_y = material_dict[self.pipe.material].sig_y
-        prelim_vals["sig_y_d"] = dnvf101.derate_material(self.pipe.material,
-                                                         sig_y,
-                                                         self.process.T_d)
+        return dnvf101.derate_material(self.pipe.material, sig_y,
+                                       self.process.T_d)
 
-        # Pressure head
-        prelim_vals["P_h_d"] = pressure_head(self.process.rho_d, self.env.g,
-                                             self.env.d_min, self.process.h_ref)
+    @property
+    def P_h_d(self):
+        """
+        Number [kg/m^3], Number [m/s/s], Number [m], Number [m] -> Number [Pa]
 
-        # Calculate internal pressure at seabed
-        prelim_vals["P_i"] = self.process.P_d + prelim_vals["P_h_d"]
+        Returns pressure head considering the reference height relative to LAT.
+        Assumes minimum water depth for worst case pressure differential.
+        """
+        return pressure_head(self.process.rho_d, self.env.g, self.env.d_min,
+                             self.process.h_ref)
 
-        # Calculate characteristic external pressures
-        prelim_vals["P_o_min"] = pressure_head(self.env.rho_w, self.env.g,
-                                               self.env.d_min, 0)
-        prelim_vals["P_o_max"] = pressure_head(self.env.rho_w, self.env.g,
-                                               self.env.d_max, 0)
+    @property
+    def P_i(self):
+        return self.process.P_d + self.P_h_d
 
-        return prelim_vals
+    @property
+    def P_o_min(self):
+        return pressure_head(self.process.rho_d, self.env.g, self.env.d_min, 0)
 
-    def _thickness_calcs(self, prelim_vals):
-        '''
-        Wall thickness calculations
-        '''
+    @property
+    def P_o_max(self):
+        return pressure_head(self.process.rho_d, self.env.g, self.env.d_max, 0)
 
-        wallthicks = {}
+    @property
+    def t_r_nom(self):
 
-        # Reeling Criteria
-        wallthicks["t_r_nom"] = reeling_thickness(
-            self.pipe.D_o, self.process.R_reel, self.pipe.t_coat)
+        # Strain factor for reeling (based on previous project experience)
+        df_s = 0.67
 
-        # Hoop Criteria
-        sig_A = allowable_hoop_stress(prelim_vals["sig_y_d"])
-        t_h_min = hoop_thickness(
-            prelim_vals["P_i"], prelim_vals["P_o_min"], self.pipe.D_o, sig_A)
-        wallthicks["t_h_nom"] = req_thickness(t_h_min,
-                                              self.pipe.t_corr,
-                                              self.pipe.f_tol)
-        wallthicks["t_h_nom_bt"] = wallthicks["t_h_nom"] / \
-            (1 - self.pipe.B)  # Bend thinning
+        if R_reel > 0:
+            # Functional strain from bending around vessel reel radius
+            epsilon_b = D_o / (2 * (R_reel + 0.5 * D_o + t_coat))
+
+            # Characteristic bending strain for buckling due to bending moments
+            # acting alone Equation (G.8)
+            return D_o * math.sqrt(epsilon_b / (15 * df_s))
+        else:
+            return 0
+
+    @property
+    def t_h_nom(self):
+        # Hoop stress design factor from Table 2
+        sig_A = 0.72 * self.sig_y_d
+
+        t_min_thin = abs(self.process.P_i - self.P_o_min) * \
+            self.pipe.D_o / (2 * sig_A)
+
+        # Select appropriate wall theory based on minimum thin wall thickness
+        if self.pipe.D_o / t_min_thin > 20:
+            t_min = t_min_thin
+        else:
+            eq = math.sqrt((((sig_A - abs(self.P_o_min - self.P_o_min))) * self.pipe.D_o**2) /
+                           (sig_A + abs(self.P_o_min - self.P_o_min)))
+            t_min = 0.5 * (self.pipe.D_o - eq)
+
+        return self.req_thickness(t_min, self.pipe.t_corr, self.pipe.f_tol)
+
+    @property
+    def t_h_nom_bt(self):
+        ''' Bend thinning '''
+        return self.t_h_nom / (1 - self.pipe.B)
+
+    @staticmethod
+    def req_thickness(t_min, t_corr, f_tol):
+        """
+        Number [m], Number [m], Number [-] -> Number [m]
+
+        Returns the required wall thickness based on the following mechanical
+        allowances:
+        - Corrosion allowance
+        - Fabrication tolerance
+
+        Exrapolated from Equation (4)
+        """
+        try:
+            return (t_min + t_corr) / (1 - f_tol)
+        except ZeroDivisionError:
+            raise ZeroDivisionError(
+                "Divide by zero. Check fabrication tolerance.")
 
         # Hydrostatic Collapse
         E = material_dict[self.pipe.material].E
