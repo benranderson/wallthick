@@ -1,5 +1,5 @@
 from .context import pd8010
-from .context import Pipe, Process, Environment
+from .context import Pipe, Process, Environment, Pd8010
 import pytest
 
 tol_pc = 0.01
@@ -20,7 +20,6 @@ test_data = {
     "P_h": 0,
     "P_o_min": 8.816,
     "P_o_max": 11.536,
-    ""
 }
 
 
@@ -70,6 +69,7 @@ def test_hoop_thickness_thick(P_i, P_o, D_o, sig_A, expected):
         P_i, P_o, D_o, sig_A) - expected) <= tol_pc * expected
 
 
+@pytest.mark.xfail
 @pytest.mark.parametrize("P_i, P_o, D_o, sig_A, expected", [
     (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3),
 ])
@@ -229,6 +229,7 @@ def test_Pd8010_wallthicks(test_cases, expected):
                expected["t_rec"]) <= tol_pc * expected["t_rec"]
 
 
+@pytest.mark.xfail
 @pytest.mark.parametrize("test_cases, expected", [
     (test_cases[0], {"P_st": 268.9e5,
                      "P_lt": 197.23e5

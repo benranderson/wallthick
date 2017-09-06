@@ -3,6 +3,7 @@
 Calculate the required wall thickness of a single walled subsea flowline in accordance with allowable stress design code [PD 8010-2](https://shop.bsigroup.com/ProductDetail?pid=000000000030344663).
 
 [![Build Status][travis-image]][travis-url]
+[![Coverage Status][coveralls-image]][coveralls-url]
 
 ## Installation (OS X)
 
@@ -15,22 +16,22 @@ $ git clone https://github.com/benranderson/wallthick.git
 Install dependencies:
 
 ```sh
-$ make
+$ pip install -r requirements/prod.txt
 ```
 
 ## Usage Example
 
-Import module:
+Input conditions
 
 ```python
->>> import wallthick as wt
+>>> from wallthick import Pipe, Process, Environment
 ```
 
 Set pipe parameters:
 
 ```python
->>> pipe = wt.Pipe(t_sel=0.0143, D_o=508e-3, t_corr=1.5e-3, f_tol=0.125, f_0=0.025,
-                   B=0, material="CS X65", t_coat=0)
+>>> pipe = Pipe(t_sel=0.0143, D_o=508e-3, t_corr=1.5e-3, f_tol=0.125, f_0=0.025,
+                B=0, material="CS X65", t_coat=0)
 ```
 Where:
 * t_sel = Selected wall thickness [m]
@@ -45,7 +46,7 @@ Where:
 Set process conditions:
 
 ```python
->>> process = wt.Process(T_d=50, P_d=132e5, h_ref=16, rho_d=1025, R_reel=0,
+>>> process = Process(T_d=50, P_d=132e5, h_ref=16, rho_d=1025, R_reel=0,
                          T_lay=0)
 ```
 
@@ -60,7 +61,7 @@ Where:
 Set environmental conditions:
 
 ```python
->>> env = wt.Environment(d_max=15.48, d_min=11, T_a=3.6)
+>>> env = Environment(d_max=15.48, d_min=11, T_a=3.6)
 ```
 
 Where:
@@ -71,7 +72,11 @@ Where:
 Create and run wall thickness analysis for selected input parameters:
 
 ```python
->>> pd8010 = wt.Pd8010(pipe, process, env)
+>>> from wallthick import Pd8010
+```
+
+```python
+>>> pd8010 = Pd8010(pipe, process, env)
 ```
 
 Results:
@@ -116,7 +121,7 @@ Where:
 Install dependencies:
 
 ```sh
-$ make setup-dev
+$ pip install -r requirements/dev.txt
 ```
 
 Run tests:
@@ -134,3 +139,7 @@ $ make test
 <!-- Markdown link & img dfn's -->
 [travis-image]: https://travis-ci.org/benranderson/wallthick.svg?branch=master
 [travis-url]: https://travis-ci.org/benranderson/wallthick
+[coveralls-image]:
+https://coveralls.io/repos/github/benranderson/wallthick/badge.svg?branch=master
+[coveralls-url]:
+https://coveralls.io/github/benranderson/wallthick?branch=master

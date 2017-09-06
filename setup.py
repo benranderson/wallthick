@@ -1,40 +1,38 @@
-from __future__ import print_function
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
-import io
-import codecs
-import os
-import sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""The setup script."""
 
 import wallthick
 
-here = os.path.abspath(os.path.dirname(__file__))
+from setuptools import setup, find_packages
 
+with open('README.md') as readme_file:
+    readme = readme_file.read()
 
-def read(*filenames, **kwargs):
-    encoding = kwargs.get('encoding', 'utf-8')
-    sep = kwargs.get('sep', '\n')
-    buf = []
-    for filename in filenames:
-        with io.open(filename, encoding=encoding) as f:
-            buf.append(f.read())
-    return sep.join(buf)
+requirements = [
+    # TODO: put package requirements here
+]
 
-
-long_description = read('README.md')
-
+setup_requirements = [
+    'pytest-runner',
+    # TODO(benranderson): put setup requirements (distutils extensions, etc.) here
+]
 
 setup(
     name='wallthick',
     version=wallthick.__version__,
-    url='https://github.com/benranderson/wallthick',
-    license='MIT License',
+    description='PD8010 wall thickness calculations',
+    long_description=readme,
     author='Ben Randerson',
     author_email='ben.m.randerson@gmail.com',
-    description='PD8010 wall thickness calculations',
-    long_description=long_description,
+    url='https://github.com/benranderson/wallthick',
+    packages=find_packages(include=['wallthick']),
+    include_package_data=True,
+    install_requires=requirements,
+    license='MIT License',
+    zip_safe=False,
     keywords='wall thickness engineering pipelines',
-    packages=['wallthick'],
     test_suite='tests',
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
@@ -47,5 +45,4 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ]
-
 )

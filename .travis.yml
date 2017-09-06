@@ -1,12 +1,19 @@
+# Config file for automatic testing at travis-ci.org
+
 language: python
 python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
+    - 3.4
+    - 3.5
+    - 3.6
+
 # command to install dependencies
 install:
-  - make
-  - make setup-dev
+    - pip install -r requirements/dev.txt
+    - pip install coveralls
+
 # command to run tests
 script:
-  - make test
+    - make coverage
+
+after_success:
+    - coveralls

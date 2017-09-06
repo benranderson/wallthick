@@ -1,2 +1,7 @@
 # Include the license file
 include LICENSE
+include README.md
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

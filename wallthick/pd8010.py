@@ -465,11 +465,3 @@ Leak Test Pressure:                              {10:0.2f} bar
            1000 * self.pipe.t_sel,
            1e-5 * self.P_st,
            1e-5 * self.P_lt)
-
-    # def write_results(self):
-    #     """
-    #     Write results to text file.
-    #     """
-
-    #     with open("results/{} Results.txt".format(self.data.name), "w") as out:
-    #         out.write(str(self))
