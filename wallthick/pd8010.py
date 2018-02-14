@@ -335,13 +335,15 @@ class Pd8010:
         # Strain factor for reeling (based on previous project experience)
         df_s = 0.67
 
-        if R_reel > 0:
+        if self.pipe.R_reel > 0:
             # Functional strain from bending around vessel reel radius
-            epsilon_b = D_o / (2 * (R_reel + 0.5 * D_o + t_coat))
+            epsilon_b = self.pipe.D_o / (2 * (self.pipe.R_reel +
+                                              0.5 * self.pipe.D_o +
+                                              self.pipe.t_coat))
 
             # Characteristic bending strain for buckling due to bending moments
             # acting alone Equation (G.8)
-            return D_o * math.sqrt(epsilon_b / (15 * df_s))
+            return self.pipe.D_o * math.sqrt(epsilon_b / (15 * df_s))
         else:
             return 0
 
