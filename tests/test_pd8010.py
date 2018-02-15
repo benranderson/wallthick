@@ -1,5 +1,5 @@
-from .context import pd
-from .context import Pipe, Process, Environment
+from wallthick import pd8010 as pd
+from wallthick.inputs import Pipe, Process, Environment
 import pytest
 
 tol_pc = 0.01

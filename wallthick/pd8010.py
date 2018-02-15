@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+
 """
+Main module for wallthick.
+
 PD 8010-2:2015
 
 Pipeline Systems - Part 2: Subsea pipelines – Code of practice - 2015
@@ -6,9 +10,9 @@ Pipeline Systems - Part 2: Subsea pipelines – Code of practice - 2015
 import math
 import scipy.optimize
 import datetime
-from . import dnvf101
-from . import api5l
-from .inputs import material_dict
+from wallthick import dnvf101
+from wallthick import api5l
+from wallthick.inputs import material_dict
 
 
 # General Code Information
@@ -431,7 +435,7 @@ class Pd8010:
                                       self.process.P_d,
                                       self.P_o_min,
                                       P_h_t)
-                                                
+
     @property
     def P_lt(self):
         ''' Leak test pressure '''
@@ -467,3 +471,9 @@ Leak Test Pressure:                              {10:0.2f} bar
            1000 * self.pipe.t_sel,
            1e-5 * self.P_st,
            1e-5 * self.P_lt)
+
+
+if __name__ == "__main__":
+
+    x = 5
+    f = 6

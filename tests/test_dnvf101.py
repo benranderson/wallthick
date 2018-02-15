@@ -1,5 +1,6 @@
 import pytest
-from .context import dnv
+
+from wallthick import dnvf101 as dnv
 
 
 @pytest.fixture(params=[

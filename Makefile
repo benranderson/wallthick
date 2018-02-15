@@ -12,10 +12,7 @@ export PRINT_HELP_PYSCRIPT
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: ## remove all build, test, coverage and Python artifacts
-	clean-build
-	clean-pyc
-	clean-test 
+clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -38,24 +35,20 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with pylint
 	pylint wallthick tests
 
-test:
-	py.test
+test: ## run tests quickly with the default Python
+	py.test tests/
 
 coverage:
-	clean
 	py.test --cov-report term --cov-report html --cov=wallthick tests
 
-release: ## package and upload a release
-	clean 
+release: clean ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
-dist: ## builds source and wheel package
-	clean 
+dist: clean ## builds source and wheel package
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: ## install the package to the active Python's site-packages
-	clean 
+install: clean ## install the package to the active Python's site-packages
 	python setup.py install

@@ -1,5 +1,5 @@
 import pytest
-from .context import api
+from wallthick import api5l as api
 
 
 @pytest.fixture(params=[

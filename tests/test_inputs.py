@@ -1,6 +1,6 @@
 import pytest
-import importlib
-from .context import inputs
+
+from wallthick.inputs import Pipe
 
 
 class TestPipe:
@@ -16,5 +16,5 @@ class TestPipe:
 
     def test_thin_wall_check(self, test_cases):
         (D_o, t, expected) = test_cases
-        pipe = inputs.Pipe(None, D_o, None, None, None, None, None, None)
+        pipe = Pipe(None, D_o, None, None, None, None, None, None)
         assert pipe.thin_wall_check(t) is expected

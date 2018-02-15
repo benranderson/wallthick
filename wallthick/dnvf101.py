@@ -133,7 +133,3 @@ def effective_axial_force(H, delta_P, A_i, v, A_s, E, alpha, delta_T):  # pragma
     temperature_term = A_s * E * alpha * delta_T
 
     return H - pressure_term - temperature_term
-
-
-if __name__ == "__main__":  # pragma: no cover
-    pass

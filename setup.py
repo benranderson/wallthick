@@ -11,12 +11,18 @@ with open('README.md') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    'Click>=6.0',
+    # TODO: Put package requirements here
 ]
 
 setup_requirements = [
     'pytest-runner',
-    # TODO(benranderson): put setup requirements (distutils extensions, etc.) here
+    # TODO(benranderson): Put setup requirements (distutils extensions, etc.) here
+]
+
+test_requirements = [
+    'pytest',
+    # TODO: Put package test requirements here
 ]
 
 setup(
@@ -28,14 +34,16 @@ setup(
     author_email='ben.m.randerson@gmail.com',
     url='https://github.com/benranderson/wallthick',
     packages=find_packages(include=['wallthick']),
+    entry_points={
+        'console_scripts': [
+            'wallthick=wallthick.cli:main',
+        ],
+    },
     include_package_data=True,
     install_requires=requirements,
     license='MIT License',
     zip_safe=False,
     keywords='wall thickness engineering pipelines',
-    test_suite='tests',
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Other Audience',
@@ -44,5 +52,8 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-    ]
+    ],
+    test_suite='tests',
+    tests_require=test_requirements,
+    setup_requires=setup_requirements,
 )
