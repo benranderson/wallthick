@@ -1,5 +1,5 @@
 import pytest
-from .context import api5l
+from .context import api
 
 
 @pytest.fixture(params=[
@@ -13,14 +13,14 @@ def test_recommended_wall_thickness_data(request):
 
 def test_recommended_wall_thickness(test_recommended_wall_thickness_data):
     (D_o, req_wt, expected) = test_recommended_wall_thickness_data
-    assert api5l.recommended_wall_thickness(D_o, req_wt) == expected
+    assert api.recommended_wall_thickness(D_o, req_wt) == expected
 
 
 def test_recommended_wall_thickness_non_api_D_o():
     with pytest.raises(KeyError):
-        api5l.recommended_wall_thickness(100e-3, 1e-3)
+        api.recommended_wall_thickness(100e-3, 1e-3)
 
 
 def test_recommended_wall_thickness_wt_greater_than_standard():
     with pytest.raises(ValueError):
-        api5l.recommended_wall_thickness(60.3e-3, 12e-3)
+        api.recommended_wall_thickness(60.3e-3, 12e-3)

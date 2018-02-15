@@ -1,38 +1,40 @@
-from .context import pd8010
+from .context import pd
 from .context import Pipe, Process, Environment
 import pytest
 
 tol_pc = 0.01
 
-test_data = {
-    "f_tol": 0.0125,
-    "B": 0,
-    "t_corr": 0,
-    "D_o": 0.0603,
-    "material": "CS X65",
-    "f_0": 0.0025,
-    "rho_w": 1027,
-    "d_max": 114.5,
-    "d_min": 87.5,
-    "P_d": 861.8,
-    "T_d": 0,
-    "sig_y_d": 450,
-    "P_h": 0,
-    "P_o_min": 8.816,
-    "P_o_max": 11.536,
-}
+test_data = [
+    {
+        "f_tol": 0.0125,
+        "B": 0,
+        "t_corr": 0,
+        "D_o": 0.0603,
+        "material": "CS X65",
+        "f_0": 0.0025,
+        "rho_w": 1027,
+        "d_max": 114.5,
+        "d_min": 87.5,
+        "P_d": 861.8,
+        "T_d": 0,
+        "sig_y_d": 450,
+        "P_h": 0,
+        "P_o_min": 8.816,
+        "P_o_max": 11.536,
+    }
+]
 
 
 @pytest.mark.parametrize("rho, g, d, h_ref, expected", [
     (1025, 9.81, 100, 0, 10.05525e5),
 ])
 def test_pressure_head(rho, g, d, h_ref, expected):
-    assert abs(pd8010.pressure_head(
+    assert abs(pd.pressure_head(
         rho, g, d, h_ref) - expected) <= tol_pc * expected
 
 
 def test_allowable_hoop_stress():
-    assert pd8010.allowable_hoop_stress(100) == 72
+    assert pd.allowable_hoop_stress(100) == 72
 
 
 @pytest.mark.xfail
@@ -40,7 +42,7 @@ def test_allowable_hoop_stress():
     (9.713e-3, 219.1e-3, None, 405, 187.392e5),
 ])
 def test_hoop_pressure_thin(t, D_o, P_o, sig, expected):
-    assert abs(pd8010.hoop_pressure_thin(
+    assert abs(pd.hoop_pressure_thin(
         t, D_o, P_o, sig) - expected) <= tol_pc * expected
 
 
@@ -49,7 +51,7 @@ def test_hoop_pressure_thin(t, D_o, P_o, sig, expected):
     (None, None, None, None, 187.392e5),
 ])
 def test_hoop_pressure_thick(t, D_o, P_o, sig, expected):
-    assert abs(pd8010.hoop_pressure_thick(
+    assert abs(pd.hoop_pressure_thick(
         t, D_o, P_o, sig) - expected) <= tol_pc * expected
 
 
@@ -57,7 +59,7 @@ def test_hoop_pressure_thick(t, D_o, P_o, sig, expected):
     (187.392e5, 809171.21, 219.1e-3, 324e6, 6.06e-3),
 ])
 def test_hoop_thickness_thin(P_i, P_o, D_o, sig_A, expected):
-    assert abs(pd8010.hoop_thickness_thin(
+    assert abs(pd.hoop_thickness_thin(
         P_i, P_o, D_o, sig_A) - expected) <= tol_pc * expected
 
 
@@ -65,7 +67,7 @@ def test_hoop_thickness_thin(P_i, P_o, D_o, sig_A, expected):
     (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3),
 ])
 def test_hoop_thickness_thick(P_i, P_o, D_o, sig_A, expected):
-    assert abs(pd8010.hoop_thickness_thick(
+    assert abs(pd.hoop_thickness_thick(
         P_i, P_o, D_o, sig_A) - expected) <= tol_pc * expected
 
 
@@ -74,7 +76,7 @@ def test_hoop_thickness_thick(P_i, P_o, D_o, sig_A, expected):
     (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3),
 ])
 def test_hoop_thickness(P_i, P_o, D_o, sig_A, expected):
-    assert abs(pd8010.hoop_thickness(
+    assert abs(pd.hoop_thickness(
         P_i, P_o, D_o, sig_A) - expected) <= tol_pc * expected
 
 
@@ -82,19 +84,19 @@ def test_hoop_thickness(P_i, P_o, D_o, sig_A, expected):
     (2, 2, 0, 4)
 ])
 def test_req_thickness(t_min, t_corr, f_tol, expected):
-    assert pd8010.req_thickness(t_min, t_corr, f_tol) == expected
+    assert pd.req_thickness(t_min, t_corr, f_tol) == expected
 
 
 def test_req_thickness_zerodiv():
     with pytest.raises(ZeroDivisionError):
-        pd8010.req_thickness(1, 1, 1)
+        pd.req_thickness(1, 1, 1)
 
 
 @pytest.mark.parametrize("P_o, sig_y, E, v, D_o, f_0, expected", [
     (23.071e5, 450e6, 207e9, 0.3, 60.3e-3, 2.5e-2, 1.112316e-3)
 ])
 def test_collapse_thickness(P_o, sig_y, E, v, D_o, f_0, expected):
-    assert abs(pd8010.collapse_thickness(
+    assert abs(pd.collapse_thickness(
         P_o, sig_y, E, v, D_o, f_0) - expected) <= tol_pc * expected
 
 
@@ -102,7 +104,7 @@ def test_collapse_thickness(P_o, sig_y, E, v, D_o, f_0, expected):
     (60.3e-3, 11.536e5, 450e6, 1.483e-3)
 ])
 def test_buckle_thickness(D_o, P_p, sig_y, expected):
-    assert abs(pd8010.buckle_thickness(
+    assert abs(pd.buckle_thickness(
         D_o, P_p, sig_y) - expected) <= tol_pc * expected
 
 
@@ -111,7 +113,7 @@ def test_buckle_thickness(D_o, P_p, sig_y, expected):
     (114.3e-3, 0, 2.5e-3, 0)
 ])
 def test_reeling_thickness(D_o, R_reel, t_coat, expected):
-    assert abs(pd8010.reeling_thickness(
+    assert abs(pd.reeling_thickness(
         D_o, R_reel, t_coat) - expected) <= tol_pc * expected
 
 
@@ -120,7 +122,7 @@ def test_reeling_thickness(D_o, R_reel, t_coat, expected):
     (None, None, None, None, None, None, None, None)
 ])
 def test_strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h, expected):
-    assert abs(pd8010.strength_test_pressure(
+    assert abs(pd.strength_test_pressure(
         t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h) - expected) <= tol_pc * expected
 
 
@@ -129,7 +131,7 @@ def test_strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h, expecte
     (0, 0)
 ])
 def test_leak_test_pressure(P_d, expected):
-    assert abs(pd8010.leak_test_pressure(P_d) - expected) <= tol_pc * expected
+    assert abs(pd.leak_test_pressure(P_d) - expected) <= tol_pc * expected
 
 
 test_cases = [{"pipe": Pipe(0.0111, 219.1e-3, 1.5e-3, 0.125, 0.025, 0.1,
@@ -170,9 +172,9 @@ test_cases = [{"pipe": Pipe(0.0111, 219.1e-3, 1.5e-3, 0.125, 0.025, 0.1,
                      }
      )
 ])
-def test_Pd8010_prelim_vals(test_cases, expected):
-    pd = pd8010.Pd8010(test_cases["pipe"], test_cases["process"],
-                       test_cases["env"])
+def test_pd_prelim_vals(test_cases, expected):
+    pd = pd.pd(test_cases["pipe"], test_cases["process"],
+               test_cases["env"])
     assert abs(pd._prelim_calcs()["sig_y_d"] -
                expected["sig_y_d"]) <= tol_pc * expected["sig_y_d"]
     assert abs(pd._prelim_calcs()["P_h_d"] -
@@ -212,9 +214,9 @@ def test_Pd8010_prelim_vals(test_cases, expected):
                      }
      )
 ])
-def test_Pd8010_wallthicks(test_cases, expected):
-    pd = pd8010.Pd8010(test_cases["pipe"], test_cases["process"],
-                       test_cases["env"])
+def test_pd_wallthicks(test_cases, expected):
+    pd = pd.pd(test_cases["pipe"], test_cases["process"],
+               test_cases["env"])
     assert abs(pd._thickness_calcs()["t_r_nom"] -
                expected["t_r_nom"]) <= tol_pc * expected["t_r_nom"]
     assert abs(pd._thickness_calcs()["t_h_nom"] -
@@ -244,9 +246,9 @@ def test_Pd8010_wallthicks(test_cases, expected):
                      }
      )
 ])
-def test_Pd8010_test_pressures(test_cases, expected):
-    pd = pd8010.Pd8010(test_cases["pipe"], test_cases["process"],
-                       test_cases["env"])
+def test_pd_test_pressures(test_cases, expected):
+    pd = pd.pd(test_cases["pipe"], test_cases["process"],
+               test_cases["env"])
     P_o_min = pd._prelim_calcs()["P_o_min"]
     assert abs(pd._test_pressure_calcs(P_o_min)[
                "P_st"] - expected["P_st"]) <= tol_pc * expected["P_st"]
@@ -264,14 +266,14 @@ def test_Pd8010_test_pressures(test_cases, expected):
 #     #             expected_t_r_nom, expected_t_h_nom, expected_t_c_nom,
 #     #             expected_t_b_nom, expected_t_rec, expected_P_st,
 #     #             expected_P_lt)
-#     (pd8010.WallThick(InputData("Aviat 8in X65",
+#     (pd.WallThick(InputData("Aviat 8in X65",
 #                                 Pipe(0.0111, 219.1e-3, 1.5e-3, 0.125, 0.025,
 #                                      0.1, materials["CS X65"], 2.5e-3),
 #                                 Process(50, 179.3e5, 0, 1025, 7.5, 0),
 #                                 Environment(124.247, 80.5, 3.6, 1025,
 #                                             9.80665))),
 #      8.29e-3, 8.64e-3, 3.25e-3, 5.58e-3, 11.1e-3, 268.9e5, 197.23e5),
-#     (pd8010.WallThick(InputData("Aviat 4in X65",
+#     (pd.WallThick(InputData("Aviat 4in X65",
 #                                 Pipe(0.0064, 114.3e-3, 1.5e-3, 0.125, 0.025,
 #                                      0.1, materials["CS X65"], 2.5e-3),
 #                                 Process(50, 179.3e5, 0, 1025, 0, 0),
