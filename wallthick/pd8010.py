@@ -10,6 +10,7 @@ from . import dnvf101
 from . import api5l
 from .inputs import material_dict
 
+
 # General Code Information
 # ========================
 
@@ -28,6 +29,7 @@ def pressure_head(rho, g, d, h_ref):
     Returns the pressure head considering the reference height relative to LAT.
     """
     return rho * g * (d + h_ref)
+
 
 # 6.4.2.1 Allowable Stress
 # ========================
@@ -308,12 +310,12 @@ class Pd8010:
 
     @property
     def P_h_d(self):
-        """
+        ''''
         Number [kg/m^3], Number [m/s/s], Number [m], Number [m] -> Number [Pa]
 
         Returns pressure head considering the reference height relative to LAT.
         Assumes minimum water depth for worst case pressure differential.
-        """
+        '''
         return pressure_head(self.process.rho_d, self.env.g, self.env.d_min,
                              self.process.h_ref)
 
@@ -372,7 +374,7 @@ class Pd8010:
 
     @staticmethod
     def req_thickness(t_min, t_corr, f_tol):
-        """
+        '''
         Number [m], Number [m], Number [-] -> Number [m]
 
         Returns the required wall thickness based on the following mechanical
@@ -381,61 +383,59 @@ class Pd8010:
         - Fabrication tolerance
 
         Exrapolated from Equation (4)
-        """
+        '''
         try:
             return (t_min + t_corr) / (1 - f_tol)
         except ZeroDivisionError:
             raise ZeroDivisionError(
                 "Divide by zero. Check fabrication tolerance.")
 
+    @property
+    def t_c_nom(self):
         # Hydrostatic Collapse
         E = material_dict[self.pipe.material].E
         v = material_dict[self.pipe.material].v
-        wallthicks["t_c_nom"] = collapse_thickness(prelim_vals["P_o_max"],
-                                                   prelim_vals["sig_y_d"],
-                                                   E,
-                                                   v,
-                                                   self.pipe.D_o,
-                                                   self.pipe.f_0)
+        return collapse_thickness(self.P_o_max,
+                                  self.sig_y_d,
+                                  E,
+                                  v,
+                                  self.pipe.D_o,
+                                  self.pipe.f_0)
 
+    @property
+    def t_b_nom(self):
         # Local Buckle Propagation
-        wallthicks["t_b_nom"] = buckle_thickness(
-            self.pipe.D_o, prelim_vals["P_o_max"], prelim_vals["sig_y_d"])
+        return buckle_thickness(
+            self.pipe.D_o, self.P_o_max, self.sig_y_d)
 
+    @property
+    def t_rec(self):
         # Recommended API 5L wall thickness
-        max_t_nom = max(wallthicks["t_r_nom"], wallthicks["t_h_nom"],
-                        wallthicks["t_h_nom_bt"], wallthicks["t_c_nom"],
-                        wallthicks["t_b_nom"])
-        wallthicks["t_rec"] = api5l.recommended_wall_thickness(
+        max_t_nom = max(self.t_r_nom, self.t_h_nom,
+                        self.t_h_nom_bt, self.t_c_nom,
+                        self.t_b_nom)
+        return api5l.recommended_wall_thickness(
             self.pipe.D_o, max_t_nom)
 
-        return wallthicks
-
-    def _test_pressure_calcs(self, P_o_min):
-        '''
-        Test pressure calculations
-        '''
-
-        pressures = {}
-
+    @property
+    def P_st(self):
+        ''' Strength test pressure '''
         # Pressure head
         P_h_t = pressure_head(1025, self.env.g,
                               self.env.d_min, self.process.h_ref)
-
-        # Strength test pressure
         sig_y = material_dict[self.pipe.material].sig_y
-        pressures["P_st"] = strength_test_pressure(self.pipe.t_sel,
-                                                   self.pipe.f_tol,
-                                                   sig_y,
-                                                   self.pipe.D_o,
-                                                   self.process.P_d,
-                                                   P_o_min,
-                                                   P_h_t)
-
-        # Leak test pressure
-        pressures["P_lt"] = leak_test_pressure(self.process.P_d)
-
-        return pressures
+        return strength_test_pressure(self.pipe.t_sel,
+                                      self.pipe.f_tol,
+                                      sig_y,
+                                      self.pipe.D_o,
+                                      self.process.P_d,
+                                      self.P_o_min,
+                                      P_h_t)
+                                                
+    @property
+    def P_lt(self):
+        ''' Leak test pressure '''
+        return leak_test_pressure(self.process.P_d)
 
     def __str__(self):
         return """{0}
