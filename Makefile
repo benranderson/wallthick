@@ -25,9 +25,11 @@ lint: ## check style with pylint
 	pylint wallthick tests
 
 test:
+	clean
 	py.test
 
 coverage:
+	clean
 	py.test --cov-report term --cov-report html --cov=wallthick tests
 
 release: ## package and upload a release
