@@ -1,5 +1,5 @@
 from .context import pd8010
-from .context import Pipe, Process, Environment, Pd8010
+from .context import Pipe, Process, Environment
 import pytest
 
 tol_pc = 0.01
