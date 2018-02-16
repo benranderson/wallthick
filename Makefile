@@ -58,6 +58,11 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
+coverage-travis: ## check code coverage for Travis CI
+	coverage run --source wallthick -m pytest tests/
+	coverage report -m
+	coverage html
+
 release: clean ## package and upload a release
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
