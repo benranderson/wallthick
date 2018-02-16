@@ -1,3 +1,15 @@
+define BROWSER_PYSCRIPT
+import os, webbrowser, sys
+
+try:
+	from urllib import pathname2url
+except:
+	from urllib.request import pathname2url
+
+webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
+endef
+export BROWSER_PYSCRIPT
+
 define PRINT_HELP_PYSCRIPT
 import re, sys
 
@@ -8,6 +20,8 @@ for line in sys.stdin:
 		print("%-20s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
+
+BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -38,8 +52,11 @@ lint: ## check style with pylint
 test: ## run tests quickly with the default Python
 	py.test tests/
 
-coverage:
-	py.test --cov-report term --cov-report html --cov=wallthick tests
+coverage: ## check code coverage quickly with the default Python
+	coverage run --source wallthick -m pytest tests/
+	coverage report -m
+	coverage html
+	$(BROWSER) htmlcov/index.html
 
 release: clean ## package and upload a release
 	python setup.py sdist upload
