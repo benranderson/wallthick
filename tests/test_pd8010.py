@@ -111,7 +111,8 @@ def test_req_thickness_zerodiv():
 
 
 @pytest.mark.parametrize("P_o, sig_y, E, v, D_o, f_0, expected", [
-    (25.292e5, 370e6, 207e9, 0.3, 0.1683, 0.125, 3.260e-3)
+    (25.292e5, 370e6, 207e9, 0.3, 0.1683, 2.5e-2, 3.260e-3),
+    (23.071e5, 450e6, 207e9, 0.3, 60.3e-3, 2.5e-2, 1.112316e-3)
 ])
 def test_collapse_thickness(P_o, sig_y, E, v, D_o, f_0, expected):
     assert abs(pd.collapse_thickness(
