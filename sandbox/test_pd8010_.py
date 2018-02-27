@@ -99,8 +99,8 @@ def test_hoop_thickness_thick(P_i, P_o, D_o, sig_A, expected):
         P_i, P_o, D_o, sig_A) - expected) <= tol_pc * expected
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize("P_i, P_o, D_o, sig_A, expected", [
+    (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3),
     (187.392e5, 809171.21, 219.1e-3, 324e6, 5.9e-3),
 ])
 def test_hoop_thickness(P_i, P_o, D_o, sig_A, expected):

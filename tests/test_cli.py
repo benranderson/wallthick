@@ -49,3 +49,18 @@ def test_command_line_interface():
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
         assert '--help  Show this message and exit.' in help_result.output
+
+
+def test_command_line_interface_missing_params():
+    """Test the CLI."""
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        test_inputs_missing = {
+            "D_o": 50
+        }
+        with open('inputs.json', 'w') as f:
+            json.dump(test_inputs_missing, f)
+
+        result = runner.invoke(cli.main, ['inputs.json'])
+        assert result.exit_code == 0
+        assert 'Check input data file includes all of the following:' in result.output

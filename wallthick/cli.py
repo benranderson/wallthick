@@ -42,9 +42,9 @@ def main(inputs):
         click.echo(f'Propagation buckling: {1000*pd.t_b:.3f} mm')
     else:
         click.echo(
-            f'Check input data file includes the following: {req_inputs}')
+            f'Check input data file includes all of the following: {req_inputs}')
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

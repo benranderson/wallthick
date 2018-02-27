@@ -218,3 +218,8 @@ class Pd8010(object):
         P_p = external_pressure(self.rho_w, self.g, d)
         t_b_min = buckle_thickness(self.D_o, P_p, self.sig_y_d)
         return req_thickness(t_b_min, self.t_corr, self.f_tol)
+
+    @property
+    def P_st(self):
+        # TODO implement
+        ...
