@@ -44,7 +44,7 @@ def test_command_line_interface():
 
         result = runner.invoke(cli.main, ['inputs.json'])
         assert result.exit_code == 0
-        assert 'Running wall thickness calculation' in result.output
+        assert 'Running PD 8010-2 wall thickness calculation...' in result.output
 
         help_result = runner.invoke(cli.main, ['--help'])
         assert help_result.exit_code == 0
