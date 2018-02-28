@@ -1,9 +1,61 @@
 # Wallthick
 
-Calculate the required wall thickness of a single walled subsea flowline in accordance with allowable stress design code [PD 8010-2](https://shop.bsigroup.com/ProductDetail?pid=000000000030344663).
+![Pipeline](https://s3-eu-west-1.amazonaws.com/openreply-enidays/wp-content/uploads/2017/03/ss-pipeline-pipe.jpg)
 
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
+
+This library calculates the required wall thickness and recommended test pressures for a single walled subsea flowline in accordance with allowable stress design code [PD 8010-2](https://shop.bsigroup.com/ProductDetail?pid=000000000030344663).
+
+
+The calculations consider the following criterion:
+* Internal pressure (hoop stress)
+* Hydrostatic collapse
+* Local buckle propagation
+
+Along with pressures for the following hydrostatic tests:
+* Strength test
+* Leak test
+
+## Tutorial and Usage
+
+Input file in json, e.g.:
+
+```json
+{
+    "name": "Test Pipe",
+    "t_sel": 0.01097,
+    "f_tol": 0.125,
+    "B": 0,
+    "t_corr": 0.001,
+    "D_o": 0.1683,
+    "sig_y": 450000000,
+    "sig_y_d": 370000000,
+    "v": 0.3,
+    "E": 207000000000,
+    "f_0": 0.025,
+    "rho_w": 1027,
+    "h": 111,
+    "H_t": 1.47,
+    "H": 26.1,
+    "P_d": 13000000,
+    "P_h": 0,
+    "g": 9.81,
+    "f_s": 2
+}
+```
+
+Uses [click](http://click.pocoo.org) cli to run calculations, i.e.:
+
+```sh
+$ wallthick [input-file-path]
+```
+
+For example:
+
+```sh
+$ wallthick inputs/inputs.json
+```
 
 ## Installation (OS X)
 
@@ -13,115 +65,24 @@ Clone repository:
 $ git clone https://github.com/benranderson/wallthick.git
 ```
 
-Install dependencies:
+Install dependencies (using [pipenv](https://github.com/pypa/pipenv)):
 
 ```sh
-$ pip install -r requirements/prod.txt
+$ pipenv install
 ```
 
-## Usage Example
-
-Input conditions
-
-```python
->>> from wallthick import Pipe, Process, Environment
-```
-
-Set pipe parameters:
-
-```python
->>> pipe = Pipe(t_sel=0.0143, D_o=508e-3, t_corr=1.5e-3, f_tol=0.125, f_0=0.025,
-                B=0, material="CS X65", t_coat=0)
-```
-Where:
-* t_sel = Selected wall thickness [m]
-* D_o = Outside diameter [m]
-* t_corr = Corrosion thickness [m]
-* f_tol = Fabrication tolerance [-]
-* f_0 = Initial ovalisation [-]
-* B = Bend thinning [-]
-* material = Pipe material
-* t_coat = Overall coating thickness [m]
-
-Set process conditions:
-
-```python
->>> process = Process(T_d=50, P_d=132e5, h_ref=16, rho_d=1025, R_reel=0,
-                         T_lay=0)
-```
-
-Where:
-* T_d = Design temperature [degC]
-* P_d = Design pressure [Pa]
-* h_ref = Reference height above water level [m]
-* rho_d = Density of operational contents [kgm^3]
-* R_reel = Vessel reel radius [m]
-* T_lay = Residual lay tension after pipeline installation [m]
-
-Set environmental conditions:
-
-```python
->>> env = Environment(d_max=15.48, d_min=11, T_a=3.6)
-```
-
-Where:
-* d_max = Maximum water depth [m]
-* d_min = Minimum water depth [m]
-* T_a = Ambient temperature [degC]
-
-Create and run wall thickness analysis for selected input parameters:
-
-```python
->>> from wallthick import Pd8010
-```
-
-```python
->>> pd8010 = Pd8010(pipe, process, env)
-```
-
-Results:
+Install wallthick package in environment:
 
 ```sh
->>> pd8010
-2017-01-27
-
-Wall Thickness Design
-=====================
-
-Pipeline: 20in X65
-
-Reeling Criterion:                               0.00 mm
-Pressure Containment:                            13.68 mm
-Pressure Containment (incl. bend thinning):      13.68 mm
-Hydrostatic Collapse:                            3.66 mm
-Propagation buckling:                            5.13 mm
-
-Minimum Recommended API Wall Thickness:          14.30 mm
-Selected Wall Thickness:                         14.30 mm
-
-Strength Test Pressure:                          200.62 bar
-Leak Test Pressure:                              145.20 bar
+$ make install
 ```
-
-Where:
-
-* Minimum wall thicknesses [m]: 
-    * t_r_nom = Reeling Criterion
-    * t_h_nom = Pressure Containment
-    * t_h_nom_bt = Pressure Containment (incl. bend thinning)
-    * t_c_nom = Hydrostatic Collapse
-    * t_b_nom = Propagation buckling
-    * t_rec = Minimum Recommended API Wall Thickness
-* Test Pressures [barg]:
-    * P_st = Strength Test Pressure:
-    * P_lt = Leak Test Pressure
 
 ## Development Setup
 
-Install dependencies:
+Install dev dependencies:
 
 ```sh
-$ pip install -r requirements/dev.txt
+$ pipenv install --dev
 ```
 
 Run tests:
@@ -129,12 +90,6 @@ Run tests:
 ```sh
 $ make test
 ```
-
-## To Do
-
-
-## Change Log
-
 
 <!-- Markdown link & img dfn's -->
 [travis-image]: https://travis-ci.org/benranderson/wallthick.svg?branch=master

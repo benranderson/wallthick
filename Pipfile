@@ -15,6 +15,7 @@ click = "*"
 
 "autopep8" = "*"
 pylint = "*"
+pytest = "*"
 
 
 [requires]
