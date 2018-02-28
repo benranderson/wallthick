@@ -29,6 +29,30 @@ def external_pressure(rho, g, d):
     return rho * g * d
 
 
+def hoop_pressure_thin(t, D_o, P_o, sig):
+    """
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
+
+    Returns the internal pressure that induces a stress, sig, in a thin
+    wall pipe of thickness t.
+
+    Equation (3)
+    """
+    return ((sig * 2 * t) / D_o) + P_o
+
+
+def hoop_pressure_thick(t, D_o, P_o, sig):
+    """
+    Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
+
+    Returns the internal pressure that induces a stress, sig, in a thick
+    walled pipe of thickness t.
+
+    Equation (5)
+    """
+    return ((sig * (D_o**2 - (D_o - 2 * t)**2)) / (D_o**2 + (D_o - 2 * t)**2)) + P_o
+
+
 def hoop_thickness_thin(P_i, P_o, D_o, sig_y_d):
     """
     Number [Pa], Number [Pa], Number [m], Number [Pa] -> Number [m]
@@ -168,6 +192,43 @@ def buckle_thickness(D_o, P_p, sig_y):
     return D_o * (P_p / (10.7 * sig_y))**(4 / 9)
 
 
+# 11 Construction - Testing
+# =========================
+
+
+def strength_test_pressure(t_sel, f_tol, sig_y, D_o, P_d, P_o, P_h):
+    """
+    InputData -> Number [Pa]
+
+    Returns the strength test pressure, i.e. the minimum of:
+    - 1.5 * design pressure:
+        Note that hydrostatic head is not multiplied by 1.5 (interpreted by
+        last paragraph of Section 11.5.2)
+    - the pressure that induces a hoop stress of 90 percent SMYS at nominal
+        wall thickness.
+
+    (Section 11.5.1, Ref.1)
+    """
+
+    # Determine nominal wall thickness (no corrosion)
+    t_min = t_sel * (1 - f_tol)
+
+    # Determine pressure that induces 90 percent SMYS using correct wall
+    # theory (i.e. thick or thin)
+    if D_o / t_min > 20:
+        # Thin wall equation
+        P_hoop = hoop_pressure_thin(t_min, D_o, P_o, 0.9 * sig_y)
+    else:
+        # Thick wall equation
+        P_hoop = hoop_pressure_thick(t_min, D_o, P_o, 0.9 * sig_y)
+
+    # Determine 1.5 * Design Pressure (note pressure head not multiplied by
+    # 1.5)
+    P_test = 1.5 * P_d + P_h
+
+    return min(P_hoop, P_test)
+
+
 class Pd8010(object):
 
     def __init__(self, data):
@@ -221,5 +282,18 @@ class Pd8010(object):
 
     @property
     def P_st(self):
-        # TODO implement
-        ...
+        ''' Strength test pressure '''
+        # min water depth
+        d, _ = water_depths(self.h, self.H_t, self.H)
+        P_o = external_pressure(self.rho_w, self.g, d)
+        return strength_test_pressure(self.t_sel, self.f_tol, self.sig_y,
+                                      self.D_o, self.P_d, P_o, self.P_h)
+
+    @property
+    def P_lt(self):
+        """
+        Return leak test pressure: 1.1 * MAOP (design pressure) at LAT
+
+        Section 11.5.3
+        """
+        return 1.1 * self.P_d
