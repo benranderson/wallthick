@@ -65,10 +65,22 @@ Clone repository:
 $ git clone https://github.com/benranderson/wallthick.git
 ```
 
+Navigate in to package directory:
+
+```sh
+$ cd wallthick
+```
+
 Install dependencies (using [pipenv](https://github.com/pypa/pipenv)):
 
 ```sh
 $ pipenv install
+```
+
+Activiate virtualenv:
+
+```sh
+$ pipenv shell
 ```
 
 Install wallthick package in environment:
