@@ -57,7 +57,7 @@ For example:
 $ wallthick inputs/inputs.json
 ```
 
-## Installation (OS X)
+## Installation
 
 Clone repository:
 
@@ -83,10 +83,16 @@ Activiate virtualenv:
 $ pipenv shell
 ```
 
-Install wallthick package in environment:
+Install wallthick package in environment (macOS):
 
 ```sh
 $ make install
+```
+
+Install wallthick package in environment (Windows):
+
+```sh
+$ python setup.py install
 ```
 
 ## Development Setup
@@ -97,10 +103,16 @@ Install dev dependencies:
 $ pipenv install --dev
 ```
 
-Run tests:
+Run tests (macOS):
 
 ```sh
 $ make test
+```
+
+Run tests (Windows):
+
+```sh
+$ py.test tests/
 ```
 
 <!-- Markdown link & img dfn's -->
