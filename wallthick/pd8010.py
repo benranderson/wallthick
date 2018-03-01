@@ -267,9 +267,8 @@ class Pd8010(object):
         _, d = water_depths(self.h, self.H_t, self.H)
         # include safety factor
         P_o = self.f_s * external_pressure(self.rho_w, self.g, d)
-        t_c_min = collapse_thickness(
+        return collapse_thickness(
             P_o, self.sig_y_d, self.E, self.v, self.D_o, self.f_0)
-        return req_thickness(t_c_min, self.t_corr, self.f_tol)
 
     @property
     def t_b(self):
@@ -277,8 +276,7 @@ class Pd8010(object):
         _, d = water_depths(self.h, self.H_t, self.H)
         # propagation pressure equal to max external pressure
         P_p = external_pressure(self.rho_w, self.g, d)
-        t_b_min = buckle_thickness(self.D_o, P_p, self.sig_y_d)
-        return req_thickness(t_b_min, self.t_corr, self.f_tol)
+        return buckle_thickness(self.D_o, P_p, self.sig_y_d)
 
     @property
     def P_st(self):
