@@ -32,10 +32,10 @@ req_inputs = [
 @click.command()
 @click.argument('inputs', type=click.File('rb'))
 def main(inputs):
-    '''Console script for wallthick.'''
+    """Console script for wallthick."""
     data = json.load(inputs)
     if all(param in data for param in req_inputs):
-        click.echo('Running wall thickness calculation...')
+        click.echo('Running PD 8010-2 wall thickness calculation...')
         pd = Pd8010(data)
         click.echo(f'\nNominal Wall thicknesses')
         click.echo(f'------------------------\n')
