@@ -32,7 +32,7 @@ req_inputs = [
 @click.command()
 @click.argument('inputs', type=click.File('rb'))
 def main(inputs):
-    '''Console script for wallthick.'''
+    """Console script for wallthick."""
     data = json.load(inputs)
     if all(param in data for param in req_inputs):
         click.secho(
