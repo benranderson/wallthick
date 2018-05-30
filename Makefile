@@ -54,9 +54,12 @@ lint: ## check style with pylint
 test: ## run tests quickly with the default Python
 	py.test -v
 
-cover: ## check code coverage quickly with the default Python
+coverage: ## check code coverage quickly with the default Python
 	py.test --cov-report term --cov-report html  --cov tests/ -v
 	$(BROWSER) htmlcov/index.html
+
+coverage-travis: ## check code coverage for Travis CI
+	py.test --cov-report term --cov-report html  --cov tests/
 
 dist: clean ## builds source and wheel package
 	python setup.py sdist bdist_wheel
