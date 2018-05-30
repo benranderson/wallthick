@@ -2,6 +2,7 @@
 
 ![Pipeline](https://s3-eu-west-1.amazonaws.com/openreply-enidays/wp-content/uploads/2017/03/ss-pipeline-pipe.jpg)
 
+[![PyPI Status][pypi-image]][pypi-url]
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 
@@ -66,6 +67,8 @@ $ pip install wallthick
 
 <!-- Markdown link & img dfn's -->
 
+[pypi-image]: https://img.shields.io/pypi/v/wallthick.svg
+[pypi-url]: https://pypi.python.org/pypi/wallthick
 [travis-image]: https://travis-ci.org/benranderson/wallthick.svg?branch=master
 [travis-url]: https://travis-ci.org/benranderson/wallthick
 [coveralls-image]: https://coveralls.io/repos/github/benranderson/wallthick/badge.svg?branch=master
