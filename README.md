@@ -59,6 +59,23 @@ For example:
 $ wallthick inputs/inputs.json
 ```
 
+Gives the following output in the terminal:
+
+```
+Running PD 8010-2 wall thickness calculation...
+
+Nominal Wall Thicknesses
+------------------------
+Pressure Containment:   5.480 mm
+Hydrostatic Collapse:   3.260 mm
+Propagation Buckling:   4.704 mm
+
+Test Pressures
+--------------
+Strength Test Pressure: 195.0 bar
+Leak Test Pressure:     143.0 bar
+```
+
 ## Installation
 
 ```sh
