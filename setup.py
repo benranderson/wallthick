@@ -5,55 +5,60 @@
 
 import wallthick
 
-from setuptools import setup, find_packages
+import setuptools
+
+# Package meta-data.
+NAME = 'wallthick'
+DESCRIPTION = 'PD8010 wall thickness calculations.'
+URL = 'https://github.com/benranderson/wallthick'
+EMAIL = 'ben.m.randerson@gmail.com'
+AUTHOR = 'Ben Randerson'
+REQUIRES_PYTHON = '>=3.4.0'
+VERSION = None
+
+# What packages are required for this module to be executed?
+requirements = [
+    'click',
+    'scipy',
+]
+
+setup_requirements = ['pytest-runner', ]
+
+test_requirements = ['pytest', ]
 
 with open('README.md') as readme_file:
-    readme = readme_file.read()
+    long_description = readme_file.read()
 
-requirements = [
-    'Click>=6.0',
-    # TODO: Put package requirements here
-]
 
-setup_requirements = [
-    'pytest-runner',
-    # TODO(benranderson): Put setup requirements (distutils extensions, etc.) here
-]
-
-test_requirements = [
-    'pytest',
-    # TODO: Put package test requirements here
-]
-
-setup(
-    name='wallthick',
+setuptools.setup(
+    name=NAME,
     version=wallthick.__version__,
-    description='PD8010 wall thickness calculations',
-    long_description=readme,
-    author='Ben Randerson',
-    author_email='ben.m.randerson@gmail.com',
-    url='https://github.com/benranderson/wallthick',
-    packages=find_packages(include=['wallthick']),
+    description=DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    author=AUTHOR,
+    author_email=EMAIL,
+    python_requires=REQUIRES_PYTHON,
+    url=URL,
+    packages=setuptools.find_packages(exclude=('tests',)),
     entry_points={
         'console_scripts': [
             'wallthick=wallthick.cli:main',
         ],
     },
-    include_package_data=True,
     install_requires=requirements,
+    setup_requires=setup_requirements,
+    include_package_data=True,
     license='MIT License',
     zip_safe=False,
     keywords='wall thickness engineering pipelines',
     classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Other Audience',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
     test_suite='tests',
     tests_require=test_requirements,
-    setup_requires=setup_requirements,
 )

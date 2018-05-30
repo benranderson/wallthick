@@ -2,6 +2,7 @@
 
 '''Console script for wallthick.'''
 
+import sys
 import click
 import json
 
@@ -52,7 +53,3 @@ def main(inputs):
         click.secho(
             f'Check input data file includes all of the following: {req_inputs}', fg='red')
     return 0
-
-
-if __name__ == '__main__':  # pragma: no cover
-    main()

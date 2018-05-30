@@ -1,6 +1,7 @@
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 
+# automatically open coverage html report results in browser
 try:
 	from urllib import pathname2url
 except:
@@ -45,32 +46,24 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
+	rm -fr .pytest_cache
 
 lint: ## check style with pylint
 	pylint wallthick tests
 
 test: ## run tests quickly with the default Python
-	py.test tests/
+	py.test -v
 
-coverage: ## check code coverage quickly with the default Python
-	coverage run --source wallthick -m pytest tests/
-	coverage report -m
-	coverage html
+cover: ## check code coverage quickly with the default Python
+	py.test --cov-report term --cov-report html  --cov tests/ -v
 	$(BROWSER) htmlcov/index.html
 
-coverage-travis: ## check code coverage for Travis CI
-	coverage run --source wallthick -m pytest tests/
-	coverage report -m
-	coverage html
-
-release: clean ## package and upload a release
-	python setup.py sdist upload
-	python setup.py bdist_wheel upload
-
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python setup.py sdist bdist_wheel
 	ls -l dist
+
+release: dist ## package and upload a release
+	twine upload dist/*
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
