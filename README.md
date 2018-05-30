@@ -20,7 +20,7 @@ Along with pressures for the following hydrostatic tests:
 
 ## Tutorial and Usage
 
-Input file in json, e.g.:
+Input json file:
 
 ```json
 {
@@ -61,7 +61,7 @@ $ wallthick inputs/inputs.json
 ## Installation
 
 ```sh
-pip install wallthick
+$ pip install wallthick
 ```
 
 <!-- Markdown link & img dfn's -->
