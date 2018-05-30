@@ -40,7 +40,7 @@ setuptools.setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=setuptools.find_packages(include=['wallthick'], exclude=['tests']),
+    packages=setuptools.find_packages(include=['wallthick']),
     entry_points={
         'console_scripts': [
             'wallthick=wallthick.cli:main',
