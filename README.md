@@ -7,15 +7,16 @@
 
 This library calculates the required wall thickness and recommended test pressures for a single walled subsea flowline in accordance with allowable stress design code [PD 8010-2](https://shop.bsigroup.com/ProductDetail?pid=000000000030344663).
 
-
 The calculations consider the following criterion:
-* Internal pressure (hoop stress)
-* Hydrostatic collapse
-* Local buckle propagation
+
+*   Internal pressure (hoop stress)
+*   Hydrostatic collapse
+*   Local buckle propagation
 
 Along with pressures for the following hydrostatic tests:
-* Strength test
-* Leak test
+
+*   Strength test
+*   Leak test
 
 ## Tutorial and Usage
 
@@ -48,7 +49,7 @@ Input file in json, e.g.:
 Uses [click](http://click.pocoo.org) cli to run calculations, i.e.:
 
 ```sh
-$ wallthick [input-file-path]
+$ wallthick path/to/input/file
 ```
 
 For example:
@@ -59,66 +60,13 @@ $ wallthick inputs/inputs.json
 
 ## Installation
 
-Clone repository:
-
 ```sh
-$ git clone https://github.com/benranderson/wallthick.git
-```
-
-Navigate in to package directory:
-
-```sh
-$ cd wallthick
-```
-
-Install dependencies (using [pipenv](https://github.com/pypa/pipenv)):
-
-```sh
-$ pipenv install
-```
-
-Activiate virtualenv:
-
-```sh
-$ pipenv shell
-```
-
-Install wallthick package in environment (macOS):
-
-```sh
-$ make install
-```
-
-Install wallthick package in environment (Windows):
-
-```sh
-$ python setup.py install
-```
-
-## Development Setup
-
-Install dev dependencies:
-
-```sh
-$ pipenv install --dev
-```
-
-Run tests (macOS):
-
-```sh
-$ make test
-```
-
-Run tests (Windows):
-
-```sh
-$ py.test tests/
+pip install wallthick
 ```
 
 <!-- Markdown link & img dfn's -->
+
 [travis-image]: https://travis-ci.org/benranderson/wallthick.svg?branch=master
 [travis-url]: https://travis-ci.org/benranderson/wallthick
-[coveralls-image]:
-https://coveralls.io/repos/github/benranderson/wallthick/badge.svg?branch=master
-[coveralls-url]:
-https://coveralls.io/github/benranderson/wallthick?branch=master
+[coveralls-image]: https://coveralls.io/repos/github/benranderson/wallthick/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/benranderson/wallthick?branch=master
