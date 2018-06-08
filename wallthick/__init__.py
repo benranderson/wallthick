@@ -8,4 +8,6 @@
 
 __author__ = """Ben Randerson"""
 __email__ = 'ben.m.randerson@email.com'
-__version__ = '0.0.3'
+__version__ = '0.0.4'
+
+from .pd8010 import *
