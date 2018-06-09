@@ -19,9 +19,9 @@ def internal_pressure(P_d, P_h):
     return P_d + P_h
 
 
-def water_depths(h, H_t, H):
-    d_min = h - (H/2)
-    d_max = h + H_t + (H/2)
+def water_depths(h, H_t, H_w):
+    d_min = h - (H_w/2)
+    d_max = h + H_t + (H_w/2)
     return d_min, d_max
 
 

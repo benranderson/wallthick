@@ -19,7 +19,7 @@ test_data = [
         "rho_w": 1027,
         "h": 111,
         "H_t": 1.47,
-        "H": 26.1,
+        "H_w": 26.1,
         "P_d": 13000000,
         "P_h": 0,
         "g": 9.81,
@@ -53,11 +53,11 @@ def test_internal_pressure(P_d, P_h, expected):
                expected) <= tol_pc * expected
 
 
-@pytest.mark.parametrize("h, H_t, H, expected", [
+@pytest.mark.parametrize("h, H_t, H_w, expected", [
     (111, 1.47, 26.1, (97.95, 125.52))
 ])
-def test_water_depths(h, H_t, H, expected):
-    d_min, d_max = pd.water_depths(h, H_t, H)
+def test_water_depths(h, H_t, H_w, expected):
+    d_min, d_max = pd.water_depths(h, H_t, H_w)
     assert abs(d_min - expected[0]) <= tol_pc * expected[0]
     assert abs(d_max - expected[1]) <= tol_pc * expected[1]
 
