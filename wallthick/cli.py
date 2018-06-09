@@ -22,7 +22,7 @@ req_inputs = [
     'rho_w',
     'h',
     'H_t',
-    'H',
+    'H_w',
     'P_d',
     'P_h',
     'g',

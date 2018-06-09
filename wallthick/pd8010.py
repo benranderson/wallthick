@@ -245,7 +245,7 @@ class Pd8010(object):
         self.rho_w = data['rho_w']
         self.h = data['h']
         self.H_t = data['H_t']
-        self.H = data['H']
+        self.H_w = data['H_w']
         self.P_d = data['P_d']
         self.P_h = data['P_h']
         self.g = data['g']
@@ -255,7 +255,7 @@ class Pd8010(object):
     def t_h(self):
         P_i = internal_pressure(self.P_d, self.P_h)
         # min water depth
-        d, _ = water_depths(self.h, self.H_t, self.H)
+        d, _ = water_depths(self.h, self.H_t, self.H_w)
         P_o = external_pressure(self.rho_w, self.g, d)
         t_h_min = hoop_thickness(P_i, P_o, self.D_o, self.sig_y_d)
         return req_thickness(t_h_min, self.t_corr, self.f_tol)
@@ -264,7 +264,7 @@ class Pd8010(object):
     def t_c(self):
         P_i = internal_pressure(self.P_d, self.P_h)
         # max water depth
-        _, d = water_depths(self.h, self.H_t, self.H)
+        _, d = water_depths(self.h, self.H_t, self.H_w)
         # include safety factor
         P_o = self.f_s * external_pressure(self.rho_w, self.g, d)
         return collapse_thickness(
@@ -273,7 +273,7 @@ class Pd8010(object):
     @property
     def t_b(self):
         # max water depth
-        _, d = water_depths(self.h, self.H_t, self.H)
+        _, d = water_depths(self.h, self.H_t, self.H_w)
         # propagation pressure equal to max external pressure
         P_p = external_pressure(self.rho_w, self.g, d)
         return buckle_thickness(self.D_o, P_p, self.sig_y_d)
@@ -282,7 +282,7 @@ class Pd8010(object):
     def P_st(self):
         ''' Strength test pressure '''
         # min water depth
-        d, _ = water_depths(self.h, self.H_t, self.H)
+        d, _ = water_depths(self.h, self.H_t, self.H_w)
         P_o = external_pressure(self.rho_w, self.g, d)
         return strength_test_pressure(self.t_sel, self.f_tol, self.sig_y,
                                       self.D_o, self.P_d, P_o, self.P_h)
