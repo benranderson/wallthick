@@ -6,7 +6,7 @@ import sys
 import click
 import json
 
-from wallthick.pd8010 import Pd8010
+import wallthick
 
 req_inputs = [
     't_sel',
@@ -38,7 +38,7 @@ def main(inputs):
     if all(param in data for param in req_inputs):
         click.secho(
             'Running PD 8010-2 wall thickness calculation...', fg='green')
-        pd = Pd8010(data)
+        pd = wallthick.Pd8010(data)
         click.echo(f'\nNominal Wall Thicknesses')
         click.echo(f'------------------------')
         click.echo(f'Pressure Containment:\t{1000*pd.t_h:.3f} mm')
