@@ -1,11 +1,12 @@
 """
 Offshore Standard DNV-OS-F101 Subsea Pipeline Systems August 2012
 """
+
 from scipy.interpolate import interp1d
 # import matplotlib.pyplot as plt
 
-title = "DNV-OS-F101"
-year = 2012
+TITLE = "DNV-OS-F101"
+YEAR = 2012
 
 """
 (Table 2-4)
