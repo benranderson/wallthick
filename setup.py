@@ -7,47 +7,23 @@ import wallthick
 
 import setuptools
 
-# Package meta-data.
-NAME = 'wallthick'
-DESCRIPTION = 'PD8010 wall thickness calculations.'
-URL = 'https://github.com/benranderson/wallthick'
-EMAIL = 'ben.m.randerson@gmail.com'
-AUTHOR = 'Ben Randerson'
-REQUIRES_PYTHON = '>=3.4.0'
-VERSION = None
-
-# What packages are required for this module to be executed?
-requirements = [
-    'click',
-    'scipy',
-]
-
-setup_requirements = ['pytest-runner', ]
-
-test_requirements = ['pytest', ]
-
-with open('README.md') as readme_file:
-    long_description = readme_file.read()
-
 
 setuptools.setup(
-    name=NAME,
+    name='wallthick',
     version=wallthick.__version__,
-    description=DESCRIPTION,
-    long_description=long_description,
+    long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    author=AUTHOR,
-    author_email=EMAIL,
-    python_requires=REQUIRES_PYTHON,
-    url=URL,
+    author='Ben Randerson',
+    author_email='ben.m.randerson@gmail.com',
+    python_requires='>=3.4.0',
+    url='https://github.com/benranderson/wallthick',
     packages=setuptools.find_packages(include=['wallthick']),
     entry_points={
         'console_scripts': [
             'wallthick=wallthick.cli:main',
         ],
     },
-    install_requires=requirements,
-    setup_requires=setup_requirements,
+    install_requires=open('requirements.txt').readlines(),
     include_package_data=True,
     license='MIT License',
     zip_safe=False,
@@ -59,6 +35,4 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
     ],
-    test_suite='tests',
-    tests_require=test_requirements,
 )
